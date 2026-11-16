@@ -1,0 +1,46 @@
+services/.idea/compiler.xml
+
+# Gradle / 빌드 결과물
+build/
+.gradle/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+services/ai-service/.env
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+dist/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+#서브모듈
+coliving-platform-config/
+
+# 배포 Secret. 샘플(*.yaml.sample)만 커밋한다.
+k8s/base/platform/hrpayroll-infra.yaml
+k8s/base/platform/hrpayroll-app.yaml
+
+# 키스토어 Secret
+keystore/secret/
