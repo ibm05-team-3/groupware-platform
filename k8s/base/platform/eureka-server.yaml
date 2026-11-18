@@ -4,7 +4,7 @@ metadata:
   name: eureka-server
   labels:
     app.kubernetes.io/name: eureka-server
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
@@ -21,7 +21,7 @@ metadata:
   name: eureka-server
   labels:
     app.kubernetes.io/name: eureka-server
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
@@ -33,7 +33,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: eureka-server
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       containers:
         - name: eureka-server

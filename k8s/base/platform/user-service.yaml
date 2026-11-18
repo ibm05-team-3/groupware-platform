@@ -4,7 +4,7 @@ metadata:
   name: user-service
   labels:
     app.kubernetes.io/name: user-service
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "4"
 spec:
@@ -24,7 +24,7 @@ metadata:
   name: user-service
   labels:
     app.kubernetes.io/name: user-service
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "4"
 spec:
@@ -36,7 +36,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: user-service
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       initContainers:
         - name: wait-deps
@@ -56,9 +56,9 @@ spec:
               containerPort: 9082
           envFrom:
             - configMapRef:
-                name: coliving-runtime
+                name: groupware-runtime
             - secretRef:
-                name: coliving-app
+                name: groupware-app
           env:
             - name: EUREKA_INSTANCE_IP_ADDRESS
               valueFrom:
@@ -73,22 +73,22 @@ spec:
             - name: SPRING_RABBITMQ_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: rabbitmq-user
             - name: SPRING_RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: rabbitmq-password
             - name: RABBITMQ_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: rabbitmq-user
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: rabbitmq-password
             - name: DB_HOST
               value: postgres
@@ -99,29 +99,29 @@ spec:
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: postgres-user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: postgres-password
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/user_service
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: postgres-user
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: postgres-password
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: redis-password
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:MaxRAMPercentage=75.0 -Duser.timezone=Asia/Seoul"

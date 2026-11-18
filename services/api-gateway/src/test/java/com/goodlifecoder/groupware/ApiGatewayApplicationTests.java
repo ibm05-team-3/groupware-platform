@@ -1,10 +1,10 @@
-package com.goodlifecoder.hrpayroll;
+package com.goodlifecoder.groupware;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EurekaApplicationTests {
+class ApiGatewayApplicationTests {
 
 	@Test
 	void contextLoads() {

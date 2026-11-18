@@ -4,7 +4,7 @@ from mcp.server.transport_security import TransportSecuritySettings
 from app.compliance.report import build_report
 from app.orchestrator.graph import run_task
 
-mcp = MCPServer("hrpayroll-ai")
+mcp = MCPServer("groupware-ai")
 
 transport_security = TransportSecuritySettings(
     allowed_hosts=[

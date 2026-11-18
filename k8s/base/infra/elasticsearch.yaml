@@ -4,7 +4,7 @@ metadata:
   name: elasticsearch
   labels:
     app.kubernetes.io/name: elasticsearch
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -22,7 +22,7 @@ metadata:
   name: elasticsearch
   labels:
     app.kubernetes.io/name: elasticsearch
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -38,7 +38,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: elasticsearch
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       securityContext:
         fsGroup: 1000
@@ -98,7 +98,7 @@ metadata:
   name: kibana
   labels:
     app.kubernetes.io/name: kibana
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -115,7 +115,7 @@ metadata:
   name: kibana
   labels:
     app.kubernetes.io/name: kibana
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -127,7 +127,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: kibana
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       initContainers:
         - name: wait-elasticsearch

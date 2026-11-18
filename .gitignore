@@ -36,11 +36,11 @@ dist/
 Thumbs.db
 
 #서브모듈
-coliving-platform-config/
+groupware-platform-config/
 
 # 배포 Secret. 샘플(*.yaml.sample)만 커밋한다.
-k8s/base/platform/hrpayroll-infra.yaml
-k8s/base/platform/hrpayroll-app.yaml
+k8s/base/platform/groupware-infra.yaml
+k8s/base/platform/groupware-app.yaml
 
 # 키스토어 Secret
 keystore/secret/

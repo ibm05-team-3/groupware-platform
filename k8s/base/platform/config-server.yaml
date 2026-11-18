@@ -4,7 +4,7 @@ metadata:
   name: config-server
   labels:
     app.kubernetes.io/name: config-server
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 spec:
@@ -21,7 +21,7 @@ metadata:
   name: config-server
   labels:
     app.kubernetes.io/name: config-server
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 spec:
@@ -33,7 +33,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: config-server
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       initContainers:
         - name: wait-rabbitmq
@@ -48,30 +48,30 @@ spec:
               containerPort: 8888
           envFrom:
             - configMapRef:
-                name: coliving-runtime
+                name: groupware-runtime
           env:
             - name: SPRING_RABBITMQ_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: rabbitmq-user
             - name: SPRING_RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: rabbitmq-password
             - name: RABBITMQ_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: rabbitmq-user
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: rabbitmq-password
             - name: SPRING_CLOUD_CONFIG_SERVER_GIT_URI
-              value: https://github.com/ibm05-team-3/hr-payroll-ai-config.git
+              value: https://github.com/ibm05-team-3/groupware-platform-config.git
             - name: SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL
               value: main
             - name: SPRING_CLOUD_CONFIG_SERVER_GIT_CLONE_ON_START

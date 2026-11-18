@@ -4,7 +4,7 @@ metadata:
   name: rabbitmq-headless
   labels:
     app.kubernetes.io/name: rabbitmq
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -25,7 +25,7 @@ metadata:
   name: rabbitmq
   labels:
     app.kubernetes.io/name: rabbitmq
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -45,7 +45,7 @@ metadata:
   name: rabbitmq
   labels:
     app.kubernetes.io/name: rabbitmq
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -61,7 +61,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: rabbitmq
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       containers:
         - name: rabbitmq
@@ -76,12 +76,12 @@ spec:
             - name: RABBITMQ_DEFAULT_USER
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: rabbitmq-user
             - name: RABBITMQ_DEFAULT_PASS
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: rabbitmq-password
           volumeMounts:
             - name: data

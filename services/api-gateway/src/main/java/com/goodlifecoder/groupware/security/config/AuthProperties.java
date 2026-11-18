@@ -1,4 +1,4 @@
-package com.goodlifecoder.hrpayroll.security.config;
+package com.goodlifecoder.groupware.security.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

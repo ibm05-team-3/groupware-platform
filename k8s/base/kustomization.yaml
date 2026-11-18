@@ -1,11 +1,11 @@
 # Argo CD Application(k8s/argocd/application.yaml)이 이 디렉터리를 동기화한다.
 # 애플리케이션 이미지 태그는 아래 images.newTag 만 바꾸면 된다.
-# Secret hrpayroll-infra, coliving-app 은 여기 넣지 않는다. docs/배포-가이드.md 를 본다.
+# Secret groupware-infra, groupware-app 은 여기 넣지 않는다. docs/배포-가이드.md 를 본다.
 # schema.sql 은 services 아래 파일을 ConfigMap 으로 넣는다.
 # Argo CD 3 는 Application 필드가 아니라 argocd-cm 의 kustomize.buildOptions 로 --load-restrictor LoadRestrictionsNone 을 받는다.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: coliving
+namespace: groupware
 resources:
   - namespace.yaml
   - platform/config.yaml
@@ -56,7 +56,7 @@ images:
   - name: ghcr.io/ibm05-team-3/control-web
     newTag: latest
 configMapGenerator:
-  - name: coliving-schema
+  - name: groupware-schema
     files:
       - user.sql=../../services/user-service/src/main/resources/db/schema.sql
       - property.sql=../../services/property-service/src/main/resources/db/schema.sql
@@ -69,4 +69,4 @@ configMapGenerator:
       annotations:
         argocd.argoproj.io/sync-wave: "1"
       labels:
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform

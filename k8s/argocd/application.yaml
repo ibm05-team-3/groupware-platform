@@ -5,19 +5,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: coliving-platform
+  name: groupware-platform
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: coliving
+  project: groupware
   source:
-    repoURL: https://github.com/ibm05-team-3/coliving-platform.git
+    repoURL: https://github.com/ibm05-team-3/groupware-platform.git
     targetRevision: main
     path: k8s/base
   destination:
     server: https://kubernetes.default.svc
-    namespace: coliving
+    namespace: groupware
   syncPolicy:
     syncOptions:
       - CreateNamespace=true

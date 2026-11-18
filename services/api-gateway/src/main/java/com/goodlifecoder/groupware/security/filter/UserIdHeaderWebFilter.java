@@ -1,4 +1,4 @@
-package com.goodlifecoder.hrpayroll.security.filter;
+package com.goodlifecoder.groupware.security.filter;
 
 import org.jspecify.annotations.NullMarked;
 import org.springframework.http.HttpHeaders;

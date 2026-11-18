@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: coliving
+  name: groupware
   labels:
-    app.kubernetes.io/name: coliving
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/name: groupware
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "0"

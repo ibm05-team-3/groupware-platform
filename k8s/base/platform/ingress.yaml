@@ -3,10 +3,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: coliving
+  name: groupware
   labels:
-    app.kubernetes.io/name: coliving
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/name: groupware
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "5"
     cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -23,7 +23,7 @@ spec:
         - kibana.darkhanmarie.site
         - prometheus.darkhanmarie.site
         - rabbitmq.darkhanmarie.site
-      secretName: coliving-tls
+      secretName: groupware-tls
   rules:
     - host: user.darkhanmarie.site
       http:

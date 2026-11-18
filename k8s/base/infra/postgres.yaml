@@ -4,7 +4,7 @@ metadata:
   name: postgres-init
   labels:
     app.kubernetes.io/name: postgres
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 data:
@@ -29,7 +29,7 @@ metadata:
   name: postgres
   labels:
     app.kubernetes.io/name: postgres
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -47,7 +47,7 @@ metadata:
   name: postgres
   labels:
     app.kubernetes.io/name: postgres
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -63,7 +63,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: postgres
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       containers:
         - name: postgres
@@ -76,12 +76,12 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: postgres-user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: postgres-password
             - name: POSTGRES_DB
               value: postgres
