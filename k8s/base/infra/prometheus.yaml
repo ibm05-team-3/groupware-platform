@@ -4,7 +4,7 @@ metadata:
   name: prometheus-config
   labels:
     app.kubernetes.io/name: prometheus
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 data:
@@ -52,7 +52,7 @@ metadata:
   name: prometheus
   labels:
     app.kubernetes.io/name: prometheus
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -69,7 +69,7 @@ metadata:
   name: prometheus
   labels:
     app.kubernetes.io/name: prometheus
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -81,7 +81,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: prometheus
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       securityContext:
         fsGroup: 65534

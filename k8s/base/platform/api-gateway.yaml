@@ -4,7 +4,7 @@ metadata:
   name: api-gateway
   labels:
     app.kubernetes.io/name: api-gateway
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "4"
 spec:
@@ -25,7 +25,7 @@ metadata:
   name: api-gateway
   labels:
     app.kubernetes.io/name: api-gateway
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "4"
 spec:
@@ -37,7 +37,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: api-gateway
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       initContainers:
         - name: wait-eureka
@@ -54,12 +54,12 @@ spec:
               containerPort: 18081
           envFrom:
             - configMapRef:
-                name: coliving-runtime
+                name: groupware-runtime
           env:
             - name: JWT_PUBLIC_KEY
               valueFrom:
                 secretKeyRef:
-                  name: coliving-app
+                  name: groupware-app
                   key: JWT_PUBLIC_KEY
             - name: EUREKA_INSTANCE_IP_ADDRESS
               valueFrom:

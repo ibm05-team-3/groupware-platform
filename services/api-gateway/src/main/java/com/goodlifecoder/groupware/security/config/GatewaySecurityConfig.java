@@ -1,8 +1,8 @@
-package com.goodlifecoder.hrpayroll.security.config;
+package com.goodlifecoder.groupware.security.config;
 
-import com.goodlifecoder.hrpayroll.common.config.AppProperties;
-import com.goodlifecoder.hrpayroll.security.filter.SessionCookieBearerWebFilter;
-import com.goodlifecoder.hrpayroll.security.filter.UserIdHeaderWebFilter;
+import com.goodlifecoder.groupware.common.config.AppProperties;
+import com.goodlifecoder.groupware.security.filter.SessionCookieBearerWebFilter;
+import com.goodlifecoder.groupware.security.filter.UserIdHeaderWebFilter;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;

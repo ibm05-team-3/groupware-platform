@@ -5,10 +5,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: coliving-schema
+  name: groupware-schema
   labels:
-    app.kubernetes.io/name: coliving-schema
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/name: groupware-schema
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
@@ -18,8 +18,8 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: coliving-schema
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/name: groupware-schema
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       restartPolicy: Never
       containers:
@@ -30,12 +30,12 @@ spec:
             - name: PGUSER
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: postgres-user
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: hrpayroll-infra
+                  name: groupware-infra
                   key: postgres-password
           command: ["sh", "-c"]
           args:
@@ -73,4 +73,4 @@ spec:
       volumes:
         - name: schema
           configMap:
-            name: coliving-schema
+            name: groupware-schema

@@ -4,7 +4,7 @@ metadata:
   name: kafka
   labels:
     app.kubernetes.io/name: kafka
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -25,7 +25,7 @@ metadata:
   name: kafka
   labels:
     app.kubernetes.io/name: kafka
-    app.kubernetes.io/part-of: coliving-platform
+    app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
@@ -41,7 +41,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: kafka
-        app.kubernetes.io/part-of: coliving-platform
+        app.kubernetes.io/part-of: groupware-platform
     spec:
       securityContext:
         fsGroup: 1000

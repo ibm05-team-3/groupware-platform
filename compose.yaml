@@ -1,10 +1,10 @@
-name: hrpayroll
+name: groupware
 
 services:
   # PostgreSQL 17 + pgvector. 앱은 5432 하나만 사용한다.
   postgres:
     image: pgvector/pgvector:pg17
-    container_name: hrpayroll-postgres
+    container_name: groupware-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: postgres
@@ -18,24 +18,24 @@ services:
       - source: postgres_init
         target: /docker-entrypoint-initdb.d/01-vector.sql
     networks:
-      - hrpayroll
+      - groupware
 
   # Redis
   redis:
     image: redis:8.10.2
-    container_name: hrpayroll-redis
+    container_name: groupware-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
-      - hrpayroll
+      - groupware
 
   # RabbitMQ
   rabbitmq:
     image: rabbitmq:4.3.6-management
-    container_name: hrpayroll-rabbitmq
+    container_name: groupware-rabbitmq
     restart: unless-stopped
     ports:
       - "5672:5672"
@@ -43,12 +43,12 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - hrpayroll
+      - groupware
 
   # Kafka KRaft. 호스트는 localhost:9092, 컨테이너는 kafka:19092.
   kafka:
     image: apache/kafka:4.4.0
-    container_name: hrpayroll-kafka
+    container_name: groupware-kafka
     restart: unless-stopped
     ports:
       - "9092:9092"
@@ -70,12 +70,12 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
     networks:
-      - hrpayroll
+      - groupware
 
   # Elasticsearch
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:9.4.5
-    container_name: hrpayroll-elasticsearch
+    container_name: groupware-elasticsearch
     restart: unless-stopped
     environment:
       - discovery.type=single-node
@@ -86,12 +86,12 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
-      - hrpayroll
+      - groupware
 
   # Kibana
   kibana:
     image: docker.elastic.co/kibana/kibana:9.4.5
-    container_name: hrpayroll-kibana
+    container_name: groupware-kibana
     restart: unless-stopped
     depends_on:
       - elasticsearch
@@ -100,12 +100,12 @@ services:
     ports:
       - "5601:5601"
     networks:
-      - hrpayroll
+      - groupware
 
   #prometheus
   prometheus:
     image: prom/prometheus:v3.5.0
-    container_name: hrpayroll-prometheus
+    container_name: groupware-prometheus
     restart: unless-stopped
     ports:
       - "9090:9090"
@@ -115,12 +115,12 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
-      - hrpayroll
+      - groupware
 
   #grafana
   grafana:
     image: grafana/grafana:12.0.0
-    container_name: hrpayroll-grafana
+    container_name: groupware-grafana
     restart: unless-stopped
     ports:
       - "3001:3000"
@@ -131,18 +131,18 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
     networks:
-      - hrpayroll
+      - groupware
 
   # S3 호환 오브젝트 스토리지. 로컬 테스트 전용이며 배포에는 넣지 않는다.
   garage:
     image: dxflrs/garage:v2.5.0
-    container_name: hrpayroll-garage
+    container_name: groupware-garage
     restart: unless-stopped
     command: ["/garage", "server", "--single-node", "--default-bucket"]
     environment:
       GARAGE_DEFAULT_ACCESS_KEY: GK0123456789abcdef01234567
       GARAGE_DEFAULT_SECRET_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
-      GARAGE_DEFAULT_BUCKET: hrpayroll-dev
+      GARAGE_DEFAULT_BUCKET: groupware-dev
     ports:
       - "3900:3900"
     configs:
@@ -158,7 +158,7 @@ services:
       retries: 10
       start_period: 10s
     networks:
-      - hrpayroll
+      - groupware
 
 configs:
   postgres_init:
@@ -181,8 +181,8 @@ configs:
 
       [admin]
       api_bind_addr = "[::]:3903"
-      admin_token = "hrpayroll-dev-admin"
-      metrics_token = "hrpayroll-dev-metrics"
+      admin_token = "groupware-dev-admin"
+      metrics_token = "groupware-dev-metrics"
   #prometheus 설정
   prometheus_config:
     content: |
@@ -234,5 +234,5 @@ volumes:
   garage_data:
 
 networks:
-  hrpayroll:
+  groupware:
     driver: bridge
