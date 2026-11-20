@@ -1,7 +1,9 @@
 package com.goodlifecoder.groupware.security.config;
 
 import com.goodlifecoder.groupware.security.filter.LoginFilter;
+import com.goodlifecoder.groupware.security.filter.SessionCookieAuthenticationFilter;
 import com.goodlifecoder.groupware.security.handler.LoginSuccessHandler;
+import com.goodlifecoder.groupware.security.http.CurrentSessionUser;
 import com.goodlifecoder.groupware.security.http.SessionCookieFactory;
 import com.goodlifecoder.groupware.security.oauth.RedisOAuth2AuthorizationRequestRepository;
 import com.goodlifecoder.groupware.security.oauth.ReturnToAuthorizationRequestResolver;
@@ -23,15 +25,17 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestCustomizers;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * 이메일 로그인과 소셜 로그인 필터 체인.
  * 세션은 STATELESS 이고 CSRF, 폼 로그인, HTTP Basic 은 끈다.
- * 인가 판단은 게이트웨이가 하므로 여기서는 모든 요청을 통과시킨다.
+ * 아래에 적은 공개 주소만 통과하고, 나머지는 세션 쿠키가 있어야 한다.
  *
  * @author 조휘재
  * 작성일: 2026-10-16
@@ -51,6 +55,7 @@ public class SecurityConfig {
     private final CustomOidcUserService customOidcUserService;
     private final AuthService authService;
     private final SessionCookieFactory sessionCookieFactory;
+    private final CurrentSessionUser currentSessionUser;
     private final RedisOAuth2AuthorizationRequestRepository authorizationRequestRepository;
 
     /** 이메일 비밀번호 해시. DelegatingPasswordEncoder 를 쓴다. */
@@ -93,8 +98,32 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                        .requestMatchers(
+                                "/user/login",
+                                "/user/signup",
+                                "/user/signup/email-verification",
+                                "/user/signup/email-verification/resend",
+                                "/user/root-signup",
+                                "/user/root-signup/email-verification",
+                                "/user/root-signup/email-verification/resend",
+                                "/user/root-signup/password",
+                                "/user/password-reset",
+                                "/user/password-reset/confirm",
+                                "/user/oauth2/authorization/**",
+                                "/user/oauth2/code/**",
+                                "/user/logout",
+                                "/internal/session/access"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/actuator/health",
+                                "/actuator/health/**",
+                                "/actuator/prometheus"
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(
+                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
+                ))
                 .oauth2Login(oauth -> oauth
                         .authorizationEndpoint(endpoint -> endpoint
                                 .authorizationRequestResolver(authorizationRequestResolver)
@@ -108,7 +137,11 @@ public class SecurityConfig {
                         .successHandler(socialSuccessHandler)
                         .failureHandler(socialFailureHandler)
                 )
-                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(
+                        new SessionCookieAuthenticationFilter(currentSessionUser),
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }

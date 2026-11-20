@@ -2,7 +2,6 @@ package com.goodlifecoder.groupware.security.config;
 
 import com.goodlifecoder.groupware.common.config.AppProperties;
 import com.goodlifecoder.groupware.security.filter.SessionCookieBearerWebFilter;
-import com.goodlifecoder.groupware.security.filter.UserIdHeaderWebFilter;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
@@ -68,47 +67,8 @@ public class GatewaySecurityConfig {
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .authorizeExchange(auth -> auth
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .pathMatchers(
-                                "/user-service/user/login",
-                                "/user-service/user/signup",
-                                "/user-service/user/signup/email-verification",
-                                "/user-service/user/signup/email-verification/resend",
-                                "/user-service/user/root-signup",
-                                "/user-service/user/root-signup/email-verification",
-                                "/user-service/user/root-signup/email-verification/resend",
-                                "/user-service/user/root-signup/password",
-                                "/user-service/user/password-reset",
-                                "/user-service/user/password-reset/confirm",
-                                "/user-service/user/oauth2/authorization/**",
-                                "/user-service/user/oauth2/code/**",
-                                "/user-service/user/logout",
-                                "/community-service/guest-inquiries",
-                                "/community-service/faq-bot/ask"
-                        ).permitAll()
-
-                        .pathMatchers(
-                                HttpMethod.GET,
-                                "/property-service/property/**"
-                        ).permitAll()
-
-                        // ==========================================
-                        // QR 체크인 관리자 권한 검사
-                        // ==========================================
-                        .pathMatchers(
-                                HttpMethod.POST,
-                                "/reservation-service/reservations/check-in"
-                        ).hasRole("ADMIN")
-
-                        // ==========================================
-                        // 공용 자원 예약 관리자 조회 권한 검사
-                        // ==========================================
-                        .pathMatchers(
-                                HttpMethod.GET,
-                                "/reservation-service/reservations/admin",
-                                "/reservation-service/reservations/admin/**"
-                        ).hasRole("ADMIN")
-
-                        // 기존 관리자 권한 검사 유지
+                        // user-service 의 공개 주소는 그 서비스 보안 설정에 있다.
+                        .pathMatchers("/user-service/user/**").permitAll()
                         .pathMatchers("/*/admin/**").hasRole("ADMIN")
 
                         .anyExchange().authenticated()
@@ -119,10 +79,6 @@ public class GatewaySecurityConfig {
                 .addFilterBefore(
                         sessionCookieBearerWebFilter,
                         SecurityWebFiltersOrder.AUTHENTICATION
-                )
-                .addFilterAfter(
-                        new UserIdHeaderWebFilter(),
-                        SecurityWebFiltersOrder.AUTHORIZATION
                 )
                 .build();
     }
