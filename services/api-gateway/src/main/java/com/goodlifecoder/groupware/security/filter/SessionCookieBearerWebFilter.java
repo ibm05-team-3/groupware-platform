@@ -78,6 +78,10 @@ public class SessionCookieBearerWebFilter implements WebFilter {
                 || path.endsWith("/user/password-reset/confirm")
                 || path.endsWith("/user/signup/email-verification")
                 || path.endsWith("/user/signup/email-verification/resend")
+                || path.endsWith("/user/root-signup")
+                || path.endsWith("/user/root-signup/email-verification")
+                || path.endsWith("/user/root-signup/email-verification/resend")
+                || path.endsWith("/user/root-signup/password")
                 || path.contains("/oauth2/authorization/")
                 || path.contains("/oauth2/code/");
     }
