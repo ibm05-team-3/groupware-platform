@@ -1,7 +1,7 @@
 package com.goodlifecoder.groupware.security.service;
 
-import com.goodlifecoder.groupware.iam.entity.RoleScope;
 import com.goodlifecoder.groupware.security.config.AuthProperties;
+import com.goodlifecoder.groupware.security.jwt.AccessTokenClaims;
 import com.goodlifecoder.groupware.security.dao.BrowserSessionDAO;
 import com.goodlifecoder.groupware.security.dao.RefreshTokenDAO;
 import com.goodlifecoder.groupware.security.entity.CustomUserDetails;
@@ -99,10 +99,7 @@ public class AuthService {
         UserDetails userDetails = findAndValidateUser(accessSub);
         Instant accessExpiresAt = Instant.now().plus(authProperties.accessTokenExpiration());
         String refreshToken = refreshTokenDAO.generateAndSave(accessSub);
-        String accessToken = accessTokenProvider.issueAccessToken(
-                accessSub,
-                userDetails.getAuthorities(),
-                scopesOf(userDetails));
+        String accessToken = accessTokenProvider.issueAccessToken(accessSub, claimsOf(userDetails));
         return new BrowserSession(accessSub, refreshToken, accessToken, accessExpiresAt.toEpochMilli());
     }
 
@@ -111,12 +108,12 @@ public class AuthService {
         return session.accessExpiresAtEpochMilli() - authProperties.accessTokenRefreshSkew().toMillis() > Instant.now().toEpochMilli();
     }
 
-    /** 본사 역할이 있으면 PLATFORM 스코프만 싣는다. */
-    private static List<String> scopesOf(UserDetails userDetails) {
-        if (userDetails instanceof CustomUserDetails details && details.hasPlatformScope()) {
-            return List.of(RoleScope.PLATFORM.name());
+    /** 본사 역할과 권한만 있는 토큰. tenant_id 는 넣지 않는다. */
+    private static AccessTokenClaims claimsOf(UserDetails userDetails) {
+        if (userDetails instanceof CustomUserDetails details) {
+            return details.accessTokenClaims();
         }
-        return List.of();
+        return new AccessTokenClaims(List.of(), List.of(), null);
     }
 
     /** 회원 번호로 계정을 읽고 잠금·비활성 여부를 확인한다. */

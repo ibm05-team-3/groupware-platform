@@ -213,9 +213,16 @@ public class GatewaySecurityConfig {
         return converter;
     }
 
-    /** roles 는 ROLE_, scope 는 SCOPE_ 권한으로 바꾼다. */
+    /**
+     * roles 는 ROLE_ 권한으로 바꾼다.
+     * tenant_id 가 없고 permissions 가 있으면 본사 토큰이므로 SCOPE_PLATFORM 을 붙인다.
+     */
     private Flux<GrantedAuthority> authorities(Jwt jwt) {
-        return Flux.concat(prefixed(jwt, "roles", "ROLE_"), prefixed(jwt, "scope", "SCOPE_"));
+        Flux<GrantedAuthority> roles = prefixed(jwt, "roles", "ROLE_");
+        if (jwt.getClaim("tenant_id") == null && !stringList(jwt, "permissions").isEmpty()) {
+            return Flux.concat(roles, Flux.just(new SimpleGrantedAuthority("SCOPE_PLATFORM")));
+        }
+        return roles;
     }
 
     private static Flux<GrantedAuthority> prefixed(Jwt jwt, String claim, String prefix) {
