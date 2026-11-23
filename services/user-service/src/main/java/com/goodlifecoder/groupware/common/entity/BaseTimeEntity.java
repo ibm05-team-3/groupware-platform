@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
  * 생성 시각과 수정 시각을 같이 가지는 엔티티의 상위 타입.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Getter
 @MappedSuperclass

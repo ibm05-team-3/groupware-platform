@@ -18,7 +18,7 @@ import java.util.UUID;
  * 이메일 로그인과 세션 갱신에 쓰는 UserDetails 조회.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor

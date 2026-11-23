@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  * 이메일 로그인 성공. 세션 쿠키를 심고 토큰 없는 JSON 을 돌려준다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {

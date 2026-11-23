@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 이메일 회원가입. 성공은 201, 형식 오류는 400, 이미 쓴 이메일은 409.
  *
  * @author 조휘재
- * 작성일: 2026-10-30
+ * 작성일: 2026-11-23
  */
 @RestController
 @RequiredArgsConstructor

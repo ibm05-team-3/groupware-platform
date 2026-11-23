@@ -14,7 +14,7 @@ import java.util.Map;
  * getName 은 로컬 회원 번호이고, 제공자 속성은 권한 판단에 쓰지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @NullMarked
 public class CustomOAuth2User implements OAuth2User {

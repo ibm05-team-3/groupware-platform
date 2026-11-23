@@ -27,7 +27,7 @@ import java.util.*;
  * roles 클레임에는 역할 코드를, scope 클레임에는 PLATFORM 같은 범위를 싣는다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

@@ -20,7 +20,7 @@ import java.util.Optional;
  * 콜백은 state 가 같을 때만 요청을 복원한다.
  *
  * @author 조휘재
- * 작성일: 2026-10-28
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

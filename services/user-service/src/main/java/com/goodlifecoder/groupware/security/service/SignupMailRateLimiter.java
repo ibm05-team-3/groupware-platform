@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * 이메일 30분에 3회, IP 한 시간에 10회.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

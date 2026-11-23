@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * 7일이 지난 미인증 가입 행을 지운다. 확인 전 데이터는 Redis 만료로도 사라진다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

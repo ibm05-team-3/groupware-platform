@@ -19,7 +19,7 @@ import java.io.IOException;
  * 소셜 로그인 성공. 같은 세션 쿠키를 심고 user-web 의 return_to 로 보낸다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

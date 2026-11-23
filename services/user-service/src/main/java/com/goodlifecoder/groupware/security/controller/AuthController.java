@@ -24,7 +24,7 @@ import java.util.UUID;
  * 로그인 본문은 LoginFilter 가 받는다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @RestController
 @RequiredArgsConstructor

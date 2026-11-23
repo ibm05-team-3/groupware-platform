@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 본사 회원 목록. 확인 전 가입은 빼고 탈퇴는 남긴다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor

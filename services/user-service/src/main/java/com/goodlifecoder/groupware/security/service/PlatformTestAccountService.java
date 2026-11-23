@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  * 본사가 확인 메일 없이 바로 로그인되는 계정을 만든다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor

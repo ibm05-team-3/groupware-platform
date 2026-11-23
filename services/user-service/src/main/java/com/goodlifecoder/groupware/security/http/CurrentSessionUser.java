@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * 요청의 세션 쿠키에서 회원 id를 읽는다. 쿠키가 없거나 UUID가 아니면 비운다.
  *
  * @author 조휘재
- * 작성일: 2026-11-01
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

@@ -16,7 +16,7 @@ import java.time.Duration;
  * 세션·토큰용 Redis 연결. 명령 타임아웃은 3초다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Configuration
 public class RedisConfig {

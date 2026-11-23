@@ -9,7 +9,7 @@ import java.time.Duration;
  * app.* 설정. 프론트 주소와 세션·소셜 쿠키를 묶는다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @ConfigurationProperties(prefix = "app")
 public record AppProperties(
@@ -20,7 +20,7 @@ public record AppProperties(
      * 소셜 로그인 성공·실패 후 돌아갈 user-web 주소.
      *
      * @author 조휘재
-     * 작성일: 2026-10-16
+     * 작성일: 2026-11-23
      */
     public record Frontend(
             String url
@@ -33,7 +33,7 @@ public record AppProperties(
      * while the browser is at the provider. Its value is a Redis key id.
      *
      * @author 조휘재
-     * 작성일: 2026-10-16
+     * 작성일: 2026-11-23
      */
     public record Cookie(
             boolean secure,

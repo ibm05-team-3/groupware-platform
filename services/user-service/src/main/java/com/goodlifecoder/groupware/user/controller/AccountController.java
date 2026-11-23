@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 로그인 회원의 닉네임 변경과 탈퇴.
  *
  * @author 조휘재
- * 작성일: 2026-11-01
+ * 작성일: 2026-11-23
  */
 @RestController
 @RequiredArgsConstructor

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * 미인증 행 삭제는 별도 트랜잭션이라, 이어지는 저장이 실패해도 활성 회원을 되살리지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor

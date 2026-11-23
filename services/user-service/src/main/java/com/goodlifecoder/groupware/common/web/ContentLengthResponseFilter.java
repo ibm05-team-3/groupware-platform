@@ -17,7 +17,7 @@ import java.io.IOException;
  * 청크 본문은 게이트웨이 프록시가 끝나지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-11-01
+ * 작성일: 2026-11-23
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)

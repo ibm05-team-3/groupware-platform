@@ -15,7 +15,7 @@ import java.util.UUID;
  * 회원.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {

@@ -14,7 +14,7 @@ import java.util.Map;
  * 컨트롤러에서 나온 예외를 HTTP 응답으로 바꾼다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @RestControllerAdvice
 public class CustomControllerAdvice {

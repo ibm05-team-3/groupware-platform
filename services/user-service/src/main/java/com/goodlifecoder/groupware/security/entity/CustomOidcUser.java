@@ -15,7 +15,7 @@ import java.util.Map;
  * 이름은 로컬 회원 id다. 권한 목록은 비어 있고, ID 토큰과 userinfo 는 제공자 값 그대로다.
  *
  * @author 조휘재
- * 작성일: 2026-10-28
+ * 작성일: 2026-11-23
  */
 @NullMarked
 public class CustomOidcUser implements OidcUser {

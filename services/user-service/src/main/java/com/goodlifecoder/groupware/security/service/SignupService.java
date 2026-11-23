@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
  * 확인 토큰은 10분이다. 5번 틀리면 다시 보낼 때까지 확인을 거절한다. 재발송은 60초에 한 번이다.
  *
  * @author 조휘재
- * 작성일: 2026-10-30
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor
@@ -194,7 +194,7 @@ public class SignupService {
      * 이메일이나 비밀번호가 비어 있거나 이메일 형식이 아닐 때.
      *
      * @author 조휘재
-     * 작성일: 2026-10-30
+     * 작성일: 2026-11-23
      */
     public static class InvalidSignupException extends RuntimeException {
     }
@@ -203,7 +203,7 @@ public class SignupService {
      * 같은 이메일 계정이 이미 있을 때.
      *
      * @author 조휘재
-     * 작성일: 2026-10-30
+     * 작성일: 2026-11-23
      */
     public static class EmailAlreadyUsedException extends RuntimeException {
     }
@@ -212,7 +212,7 @@ public class SignupService {
      * 메일이 꺼져 있어 가입을 받지 않을 때.
      *
      * @author 조휘재
-     * 작성일: 2026-11-11
+     * 작성일: 2026-11-23
      */
     public static class MailDisabledException extends RuntimeException {
     }
@@ -221,7 +221,7 @@ public class SignupService {
      * 확인 메일을 보내지 못했을 때.
      *
      * @author 조휘재
-     * 작성일: 2026-11-11
+     * 작성일: 2026-11-23
      */
     public static class MailSendException extends RuntimeException {
     }
@@ -230,7 +230,7 @@ public class SignupService {
      * 확인 코드가 없거나 틀리거나 만료됐을 때. 그 이메일로 활성 회원이 이미 있으면 여기로 바꾼다.
      *
      * @author 조휘재
-     * 작성일: 2026-11-11
+     * 작성일: 2026-11-23
      */
     public static class InvalidSignupTokenException extends RuntimeException {
     }
@@ -245,7 +245,7 @@ public class SignupService {
      * 가입 확인 메일이 이메일 또는 IP 한도를 넘었을 때.
      *
      * @author 조휘재
-     * 작성일: 2026-11-11
+     * 작성일: 2026-11-23
      */
     public static class TooManyRequestsException extends RuntimeException {
     }

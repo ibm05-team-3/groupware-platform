@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
  * 앱 안 경로만 허용하고, 스키마나 프로토콜 상대 경로는 버린다.
  *
  * @author 조휘재
- * 작성일: 2026-10-30
+ * 작성일: 2026-11-23
  */
 public final class SocialReturnPath {
 

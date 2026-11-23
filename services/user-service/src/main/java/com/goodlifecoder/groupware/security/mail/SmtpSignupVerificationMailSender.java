@@ -17,7 +17,7 @@ import org.springframework.web.util.HtmlUtils;
  * Gmail SMTP. 접속 정보는 spring.mail.* 이고 비밀번호는 MAIL_APP_PASSWORD 이다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Component
 @ConditionalOnProperty(prefix = "app.mail", name = "enabled", havingValue = "true")

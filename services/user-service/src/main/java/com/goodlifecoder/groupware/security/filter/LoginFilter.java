@@ -21,7 +21,7 @@ import java.io.IOException;
  * POST JSON 이메일·비밀번호를 UsernamePasswordAuthenticationToken 으로 바꾼다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 

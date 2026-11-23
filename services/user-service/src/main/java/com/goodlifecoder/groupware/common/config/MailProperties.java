@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
  * 발송 주소와 SMTP 비밀번호는 MAIL_USERNAME, MAIL_APP_PASSWORD 이다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @ConfigurationProperties(prefix = "app.mail")
 public record MailProperties(

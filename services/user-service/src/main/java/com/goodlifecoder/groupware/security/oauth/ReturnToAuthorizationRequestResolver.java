@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
  * 인가 요청에 안전한 return_to 를 붙인다. 없거나 거절되면 원 요청을 그대로 둔다.
  *
  * @author 조휘재
- * 작성일: 2026-10-30
+ * 작성일: 2026-11-23
  */
 public final class ReturnToAuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
 

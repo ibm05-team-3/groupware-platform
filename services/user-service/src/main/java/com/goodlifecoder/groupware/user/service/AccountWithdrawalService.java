@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
  * users 행은 다른 서비스의 회원 id 참조를 위해 남기고 로그인만 막는다.
  *
  * @author 조휘재
- * 작성일: 2026-11-05
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor

@@ -15,7 +15,7 @@ import java.util.Optional;
  * 이름은 설정값이고 값은 세션 번호다. 토큰은 쿠키에 넣지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-10-27
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

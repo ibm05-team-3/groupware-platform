@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 본사 테스트 계정. 본사 역할이 있어야 한다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @RestController
 @RequiredArgsConstructor

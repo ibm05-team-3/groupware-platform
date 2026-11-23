@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
  * 회원 서비스 Spring Boot 진입점.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @SpringBootApplication
 @ConfigurationPropertiesScan

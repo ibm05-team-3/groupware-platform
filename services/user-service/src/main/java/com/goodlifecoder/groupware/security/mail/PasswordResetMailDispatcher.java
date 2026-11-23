@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * 발송 실패는 토큰을 지우고 로그만 남긴다. 응답 코드로 계정 유무가 드러나지 않게 한다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Slf4j
 @Component

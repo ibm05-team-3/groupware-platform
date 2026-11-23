@@ -40,7 +40,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * /platform/** 는 본사 역할이 있어야 한다. 게이트웨이를 우회해도 같다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Configuration
 @EnableWebSecurity

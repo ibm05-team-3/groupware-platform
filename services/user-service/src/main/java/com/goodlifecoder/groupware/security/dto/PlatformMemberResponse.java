@@ -8,7 +8,7 @@ import java.util.UUID;
  * 본사 화면에 주는 회원 한 줄. 탈퇴하면 email 은 null 이다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 public record PlatformMemberResponse(
         UUID id,

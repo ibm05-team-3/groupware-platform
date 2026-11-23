@@ -6,7 +6,7 @@ import lombok.Getter;
  * 지원하는 소셜 로그인. 네이버와 구글만 받는다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Getter
 public enum SocialProviderType {

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * 메일이 꺼져 있으면 재설정 메일을 보내지 않는다. 링크는 로그에 남기지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Slf4j
 @Component

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 계정 유무는 응답으로 구분하지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @RestController
 @RequiredArgsConstructor
