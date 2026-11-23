@@ -11,13 +11,13 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
  * 발송 주소와 SMTP 비밀번호는 MAIL_USERNAME, MAIL_APP_PASSWORD 이다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @ConfigurationProperties(prefix = "app.mail")
 public record MailProperties(
         @DefaultValue("false") boolean enabled,
         @DefaultValue("") String from,
-        @DefaultValue("Roomlink") String fromName,
+        @DefaultValue("Groupware") String fromName,
         @DefaultValue("http://localhost:5173") String linkBaseUrl,
         @DefaultValue("30m") Duration resetTokenTtl
 ) {
@@ -27,7 +27,7 @@ public record MailProperties(
             from = "";
         }
         if (fromName == null || fromName.isBlank()) {
-            fromName = "Roomlink";
+            fromName = "Groupware";
         }
         if (linkBaseUrl == null || linkBaseUrl.isBlank()) {
             linkBaseUrl = "http://localhost:5173";

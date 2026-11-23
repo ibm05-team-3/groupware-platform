@@ -24,7 +24,7 @@ import java.util.Set;
  * 쿠키 값은 세션 번호이고, 액세스·리프레시 토큰은 Redis 에만 둔다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor

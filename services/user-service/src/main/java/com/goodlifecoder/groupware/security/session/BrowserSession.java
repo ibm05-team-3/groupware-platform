@@ -5,7 +5,7 @@ package com.goodlifecoder.groupware.security.session;
  * sub 는 회원 번호이고, 토큰은 서버에만 있다. 쿠키에는 세션 번호만 나간다.
  *
  * @author 조휘재
- * 작성일: 2026-10-27
+ * 작성일: 2026-11-23
  */
 public record BrowserSession(
         String sub,

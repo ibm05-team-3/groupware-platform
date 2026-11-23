@@ -15,7 +15,7 @@ import org.springframework.web.util.HtmlUtils;
  * Gmail SMTP. 접속 정보는 spring.mail.* 이고 비밀번호는 MAIL_APP_PASSWORD 이다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Component
 @ConditionalOnProperty(prefix = "app.mail", name = "enabled", havingValue = "true")
@@ -41,7 +41,7 @@ public class SmtpPasswordResetMailSender implements PasswordResetMailSender {
             MimeMessageHelper helper = new MimeMessageHelper(message, false, StandardCharsets.UTF_8.name());
             helper.setFrom(mailProperties.from(), mailProperties.fromName());
             helper.setTo(to);
-            helper.setSubject("룸링크 비밀번호 재설정");
+            helper.setSubject("Groupware 비밀번호 재설정");
             helper.setText(html(resetUrl), true);
             mailSender.send(message);
         } catch (MessagingException | UnsupportedEncodingException ex) {

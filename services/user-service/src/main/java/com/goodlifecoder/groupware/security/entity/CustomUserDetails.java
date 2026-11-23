@@ -13,7 +13,7 @@ import java.util.List;
  * getUsername 은 회원 id 문자열이다. 권한은 이 객체에 싣지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 public class CustomUserDetails implements UserDetails {
 

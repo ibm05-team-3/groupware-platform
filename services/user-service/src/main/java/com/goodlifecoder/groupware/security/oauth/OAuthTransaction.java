@@ -10,7 +10,7 @@ import java.util.Set;
  * Redis 에 넣을 소셜 인가 요청. 문자열만 담아 JSON 으로 직렬화한다.
  *
  * @author 조휘재
- * 작성일: 2026-10-28
+ * 작성일: 2026-11-23
  */
 public record OAuthTransaction(
         String authorizationUri,

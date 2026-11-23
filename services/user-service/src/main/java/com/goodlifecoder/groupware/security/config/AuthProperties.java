@@ -9,7 +9,7 @@ import java.time.Duration;
  * 액세스 토큰 서명 키, 발급자, 만료, 리프레시 만료, 갱신 여유 시간을 묶는다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @ConfigurationProperties(prefix = "auth")
 public record AuthProperties(

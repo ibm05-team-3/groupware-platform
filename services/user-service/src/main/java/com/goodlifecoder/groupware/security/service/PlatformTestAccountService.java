@@ -13,14 +13,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * 관리자가 확인 메일 없이 바로 로그인되는 계정을 만든다.
+ * 본사가 확인 메일 없이 바로 로그인되는 계정을 만든다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor
-public class AdminTestAccountService {
+public class PlatformTestAccountService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

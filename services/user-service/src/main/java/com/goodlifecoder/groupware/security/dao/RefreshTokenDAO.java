@@ -18,7 +18,7 @@ import java.util.Optional;
  * 값은 액세스 토큰 subject(회원 번호)이고, 원문은 세션 JSON 에만 있다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

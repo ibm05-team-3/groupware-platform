@@ -14,7 +14,7 @@ import java.util.Optional;
  * 값은 Redis 트랜잭션 번호이고, SameSite 는 세션 쿠키와 달리 항상 Lax 다.
  *
  * @author 조휘재
- * 작성일: 2026-10-28
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

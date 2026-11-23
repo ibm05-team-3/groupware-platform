@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * 소셜 로그인 연결.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Repository
 public interface SocialAccountRepository extends JpaRepository<UserSocialAccountEntity, UserSocialAccountId> {

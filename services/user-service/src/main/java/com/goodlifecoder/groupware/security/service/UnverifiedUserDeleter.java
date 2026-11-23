@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 확인하지 않은 가입 행만 지운다. 활성 회원과 탈퇴 회원은 그대로 둔다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor

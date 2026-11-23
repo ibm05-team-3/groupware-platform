@@ -19,7 +19,7 @@ import java.util.Set;
  * TTL 은 리프레시 토큰 만료와 같다.
  *
  * @author 조휘재
- * 작성일: 2026-10-27
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

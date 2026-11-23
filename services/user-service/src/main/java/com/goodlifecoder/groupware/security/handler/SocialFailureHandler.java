@@ -15,7 +15,7 @@ import java.io.IOException;
  * 소셜 로그인 실패. 오류 화면 없이 user-web 첫 주소로 보낸다.
  *
  * @author 조휘재
- * 작성일: 2026-10-28
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

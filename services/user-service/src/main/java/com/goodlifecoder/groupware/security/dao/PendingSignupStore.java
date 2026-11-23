@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * 다시 보내도 처음 시각부터 센 만료는 늘리지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor
@@ -85,7 +85,7 @@ public class PendingSignupStore {
      * 대기 중인 가입. passwordHash 는 인코딩된 값이다.
      *
      * @author 조휘재
-     * 작성일: 2026-11-11
+     * 작성일: 2026-11-23
      */
     public record PendingSignup(String email, String passwordHash) {
     }

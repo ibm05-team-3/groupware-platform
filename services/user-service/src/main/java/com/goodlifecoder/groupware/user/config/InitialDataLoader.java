@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * dev 프로파일에서만 로컬 계정 admin@naver.com 이 없으면 한 번 넣는다. 비밀번호는 12341234.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Profile("dev")
 @Component

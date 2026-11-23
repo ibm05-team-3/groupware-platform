@@ -17,7 +17,7 @@ import java.util.Optional;
  * TTL 은 쿠키 oauthTransactionMaxAge 와 같다.
  *
  * @author 조휘재
- * 작성일: 2026-10-28
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

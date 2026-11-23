@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 메일이 켜져 있으면 응답을 먼저 끝낸 뒤 링크를 그 메일함으로만 보낸다. 응답에는 토큰을 넣지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Slf4j
 @Service
@@ -88,7 +88,7 @@ public class PasswordResetService {
      * app.mail.enabled 가 꺼져 있을 때.
      *
      * @author 조휘재
-     * 작성일: 2026-11-11
+     * 작성일: 2026-11-23
      */
     public static class MailDisabledException extends RuntimeException {
     }
@@ -97,7 +97,7 @@ public class PasswordResetService {
      * 이메일이나 비밀번호 형식이 아닐 때.
      *
      * @author 조휘재
-     * 작성일: 2026-11-11
+     * 작성일: 2026-11-23
      */
     public static class InvalidPasswordResetException extends RuntimeException {
     }
@@ -106,7 +106,7 @@ public class PasswordResetService {
      * 토큰이 없거나 이미 썼을 때.
      *
      * @author 조휘재
-     * 작성일: 2026-11-11
+     * 작성일: 2026-11-23
      */
     public static class InvalidPasswordResetTokenException extends RuntimeException {
     }

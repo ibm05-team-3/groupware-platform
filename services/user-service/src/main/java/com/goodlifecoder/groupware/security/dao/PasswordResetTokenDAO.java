@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * 재설정 토큰은 해시만 저장한다. 원문은 메일로만 나간다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Component
 @RequiredArgsConstructor

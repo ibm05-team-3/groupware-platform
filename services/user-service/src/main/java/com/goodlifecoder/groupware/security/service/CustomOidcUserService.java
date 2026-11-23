@@ -17,7 +17,7 @@ import java.util.Map;
  * OidcUserService 로 클레임을 받은 뒤 로컬 회원과 연결한다.
  *
  * @author 조휘재
- * 작성일: 2026-10-28
+ * 작성일: 2026-11-23
  */
 @Service
 public class CustomOidcUserService implements OAuth2UserService<OidcUserRequest, OidcUser> {

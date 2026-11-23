@@ -29,7 +29,7 @@ import java.util.Optional;
  * 이미 연결된 계정은 이후 로그인에서 프로필을 덮어쓰지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-10-16
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor

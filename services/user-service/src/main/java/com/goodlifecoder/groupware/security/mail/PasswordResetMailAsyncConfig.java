@@ -9,7 +9,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * 재설정 메일 전용 실행기. 코어 1, 최대 2, 대기 50.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Configuration
 @EnableAsync

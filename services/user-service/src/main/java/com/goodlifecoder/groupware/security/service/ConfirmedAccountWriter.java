@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 이미 정리된 이메일로 활성 회원을 만든다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor

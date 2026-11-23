@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 확인 전 가입 행의 남은 기간과 삭제. Redis 대기는 다루지 않는다.
  *
  * @author 조휘재
- * 작성일: 2026-11-11
+ * 작성일: 2026-11-23
  */
 @Service
 @RequiredArgsConstructor
