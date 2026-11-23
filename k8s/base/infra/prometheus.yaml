@@ -21,24 +21,6 @@ data:
           - targets: ["user-service:8082"]
             labels:
               service: user-service
-          - targets: ["property-service:8083"]
-            labels:
-              service: property-service
-          - targets: ["community-service:8084"]
-            labels:
-              service: community-service
-          - targets: ["reservation-service:8085"]
-            labels:
-              service: reservation-service
-          - targets: ["dashboard-service:8086"]
-            labels:
-              service: dashboard-service
-          - targets: ["document-service:8087"]
-            labels:
-              service: document-service
-          - targets: ["contract-service:8089"]
-            labels:
-              service: contract-service
           - targets: ["eureka-server:8761"]
             labels:
               service: eureka-server

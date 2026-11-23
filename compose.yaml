@@ -198,24 +198,6 @@ configs:
             - targets: ['host.docker.internal:8082']
               labels:
                 service: user-service
-            - targets: ['host.docker.internal:8083']
-              labels:
-                service: property-service
-            - targets: ['host.docker.internal:8084']
-              labels:
-                service: community-service
-            - targets: ['host.docker.internal:8085']
-              labels:
-                service: reservation-service
-            - targets: ['host.docker.internal:8086']
-              labels:
-                service: dashboard-service
-            - targets: ['host.docker.internal:8087']
-              labels:
-                service: document-service
-            - targets: ['host.docker.internal:8089']
-              labels:
-                service: contract-service
             - targets: ['host.docker.internal:8761']
               labels:
                 service: eureka-server
