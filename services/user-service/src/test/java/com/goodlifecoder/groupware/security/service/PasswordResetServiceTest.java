@@ -132,7 +132,7 @@ class PasswordResetServiceTest {
 
     private PasswordResetService service(boolean enabled) {
         MailProperties mailProperties = new MailProperties(
-                enabled, "roomlink@gmail.com", "Roomlink", "http://localhost:5173", Duration.ofMinutes(30));
+                enabled, "roomlink@gmail.com", "Groupware", "http://localhost:5173", Duration.ofMinutes(30));
         return new PasswordResetService(mailProperties, users, tokens, mail, limits, encoder, auth);
     }
 

@@ -43,7 +43,7 @@ public class SmtpSignupVerificationMailSender implements SignupVerificationMailS
             MimeMessageHelper helper = new MimeMessageHelper(message, false, StandardCharsets.UTF_8.name());
             helper.setFrom(mailProperties.from(), mailProperties.fromName());
             helper.setTo(to);
-            helper.setSubject("룸링크 회원가입 확인");
+            helper.setSubject("Groupware 회원가입 확인");
             helper.setText(html(code), true);
             mailSender.send(message);
         } catch (MessagingException | UnsupportedEncodingException ex) {
@@ -61,7 +61,7 @@ public class SmtpSignupVerificationMailSender implements SignupVerificationMailS
                 <html lang="ko"><body style="margin:0;padding:24px;background:#f4f4f2;font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#222">
                 <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:8px;padding:32px">
                 <h1 style="margin:0 0 16px;font-size:20px">회원가입 확인</h1>
-                <p style="font-size:15px;line-height:1.6">룸링크 가입을 확인하려면 아래 코드를 입력해 주세요. 이 코드는 %d분 동안만 사용할 수 있습니다. 확인하지 않으면 가입 정보는 %d일 뒤에 삭제되고, 그 이메일로 다시 가입할 수 있습니다. 가입하지 않았다면 이 메일을 무시하세요.</p>
+                <p style="font-size:15px;line-height:1.6">Groupware 가입을 확인하려면 아래 코드를 입력해 주세요. 이 코드는 %d분 동안만 사용할 수 있습니다. 확인하지 않으면 가입 정보는 %d일 뒤에 삭제되고, 그 이메일로 다시 가입할 수 있습니다. 가입하지 않았다면 이 메일을 무시하세요.</p>
                 <p style="margin:28px 0 0;font-size:16px;word-break:break-all;font-weight:bold">%s</p>
                 <p style="margin:32px 0 0;font-size:12px;color:#888">본 메일은 발신 전용입니다.</p>
                 </div></body></html>

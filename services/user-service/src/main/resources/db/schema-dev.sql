@@ -1,19 +1,11 @@
 -- user-service DB 초기화 스크립트
 DROP TABLE IF EXISTS user_tenant_roles CASCADE;
 DROP TABLE IF EXISTS user_platform_roles CASCADE;
-DROP TABLE IF EXISTS user_roles CASCADE;
 DROP TABLE IF EXISTS roles CASCADE;
 DROP TABLE IF EXISTS user_tenant_memberships CASCADE;
 DROP TABLE IF EXISTS tenants CASCADE;
 DROP TABLE IF EXISTS user_social_accounts CASCADE;
-DROP TABLE IF EXISTS user_email_accounts CASCADE;
-DROP TABLE IF EXISTS contract_autocomplete CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS email_autocomplete CASCADE;
-DROP TABLE IF EXISTS name_autocomplete CASCADE;
-DROP TABLE IF EXISTS phone_autocomplete CASCADE;
-DROP TABLE IF EXISTS address_autocomplete CASCADE;
-DROP TABLE IF EXISTS contract_language_autocomplete CASCADE;
 
 -- 테넌트. slug 는 주소에 쓰고 유일하다. status 는 ACTIVE 또는 SUSPENDED.
 CREATE TABLE tenants (

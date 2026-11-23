@@ -55,7 +55,7 @@ class PasswordResetTokenDAOTest {
 
     private static PasswordResetTokenDAO dao(StringRedisTemplate redis) {
         MailProperties mailProperties = new MailProperties(
-                true, "roomlink@gmail.com", "Roomlink", "http://localhost:5173", Duration.ofMinutes(30));
+                true, "roomlink@gmail.com", "Groupware", "http://localhost:5173", Duration.ofMinutes(30));
         return new PasswordResetTokenDAO(redis, mailProperties);
     }
 }

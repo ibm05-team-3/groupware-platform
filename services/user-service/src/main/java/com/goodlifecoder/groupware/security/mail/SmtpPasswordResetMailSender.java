@@ -41,7 +41,7 @@ public class SmtpPasswordResetMailSender implements PasswordResetMailSender {
             MimeMessageHelper helper = new MimeMessageHelper(message, false, StandardCharsets.UTF_8.name());
             helper.setFrom(mailProperties.from(), mailProperties.fromName());
             helper.setTo(to);
-            helper.setSubject("룸링크 비밀번호 재설정");
+            helper.setSubject("Groupware 비밀번호 재설정");
             helper.setText(html(resetUrl), true);
             mailSender.send(message);
         } catch (MessagingException | UnsupportedEncodingException ex) {

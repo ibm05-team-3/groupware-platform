@@ -21,7 +21,7 @@ class SmtpSignupVerificationMailSenderTest {
         MimeMessage message = new MimeMessage(Session.getInstance(new Properties()));
         when(mailSender.createMimeMessage()).thenReturn(message);
         MailProperties mailProperties = new MailProperties(
-                true, "roomlink@gmail.com", "Roomlink", "http://localhost:5173", Duration.ofMinutes(30));
+                true, "roomlink@gmail.com", "Groupware", "http://localhost:5173", Duration.ofMinutes(30));
         SmtpSignupVerificationMailSender sender = new SmtpSignupVerificationMailSender(mailSender, mailProperties);
 
         sender.send("person@gmail.com", "raw-token");
@@ -29,7 +29,7 @@ class SmtpSignupVerificationMailSenderTest {
         verify(mailSender).send(message);
         assertThat(message.getFrom()[0].toString()).contains("roomlink@gmail.com");
         assertThat(message.getAllRecipients()[0].toString()).isEqualTo("person@gmail.com");
-        assertThat(message.getSubject()).isEqualTo("룸링크 회원가입 확인");
+        assertThat(message.getSubject()).isEqualTo("Groupware 회원가입 확인");
         String body = message.getContent().toString();
         assertThat(body).contains("raw-token").contains("10분");
         assertThat(body).doesNotContain("http://");

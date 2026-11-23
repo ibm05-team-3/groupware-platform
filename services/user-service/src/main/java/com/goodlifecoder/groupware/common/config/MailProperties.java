@@ -17,7 +17,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public record MailProperties(
         @DefaultValue("false") boolean enabled,
         @DefaultValue("") String from,
-        @DefaultValue("Roomlink") String fromName,
+        @DefaultValue("Groupware") String fromName,
         @DefaultValue("http://localhost:5173") String linkBaseUrl,
         @DefaultValue("30m") Duration resetTokenTtl
 ) {
@@ -27,7 +27,7 @@ public record MailProperties(
             from = "";
         }
         if (fromName == null || fromName.isBlank()) {
-            fromName = "Roomlink";
+            fromName = "Groupware";
         }
         if (linkBaseUrl == null || linkBaseUrl.isBlank()) {
             linkBaseUrl = "http://localhost:5173";

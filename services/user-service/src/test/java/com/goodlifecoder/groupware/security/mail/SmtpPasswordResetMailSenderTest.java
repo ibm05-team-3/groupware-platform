@@ -22,7 +22,7 @@ class SmtpPasswordResetMailSenderTest {
         MimeMessage message = new MimeMessage(Session.getInstance(new Properties()));
         when(mailSender.createMimeMessage()).thenReturn(message);
         MailProperties mailProperties = new MailProperties(
-                true, "roomlink@gmail.com", "Roomlink", "http://localhost:5173", Duration.ofMinutes(30));
+                true, "roomlink@gmail.com", "Groupware", "http://localhost:5173", Duration.ofMinutes(30));
         SmtpPasswordResetMailSender sender = new SmtpPasswordResetMailSender(mailSender, mailProperties);
 
         sender.send("resident-a@test.com", "http://localhost:5173/password-reset?token=raw-token");
@@ -30,6 +30,6 @@ class SmtpPasswordResetMailSenderTest {
         verify(mailSender).send(message);
         assertThat(message.getFrom()[0].toString()).contains("roomlink@gmail.com");
         assertThat(message.getAllRecipients()[0].toString()).isEqualTo("resident-a@test.com");
-        assertThat(message.getSubject()).isEqualTo("룸링크 비밀번호 재설정");
+        assertThat(message.getSubject()).isEqualTo("Groupware 비밀번호 재설정");
     }
 }

@@ -268,7 +268,7 @@ class SignupServiceTest {
 
     private SignupService service(boolean mailEnabled) {
         MailProperties properties = new MailProperties(
-                mailEnabled, "roomlink@gmail.com", "Roomlink", "http://localhost:5173", Duration.ofMinutes(30));
+                mailEnabled, "roomlink@gmail.com", "Groupware", "http://localhost:5173", Duration.ofMinutes(30));
         return new SignupService(
                 users, encoder, properties, codes, mail, pending, limiter, cleanup, writer);
     }
