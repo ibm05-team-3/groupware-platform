@@ -1,7 +1,6 @@
 package com.goodlifecoder.groupware.security.handler;
 
 import com.goodlifecoder.groupware.security.dto.SessionResponseDTO;
-import com.goodlifecoder.groupware.security.filter.LoginFilter;
 import com.goodlifecoder.groupware.security.http.SessionCookieFactory;
 import com.goodlifecoder.groupware.security.service.AuthService;
 import com.goodlifecoder.groupware.security.session.LoginEntrance;
@@ -41,7 +40,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         String sub = authentication.getName();
         String sessionId = entrance == LoginEntrance.PLATFORM
                 ? authService.openPlatformSession(sub).orElse(null)
-                : authService.openTenantSession(sub, String.valueOf(request.getAttribute(LoginFilter.TENANT_SLUG))).orElse(null);
+                : authService.openSession(sub);
         if (sessionId == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;

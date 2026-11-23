@@ -36,7 +36,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * 테넌트 이메일 로그인, 본사 이메일 로그인, 회원 소셜 로그인, 본사 소셜 로그인을 한 체인에 묶는다.
+ * 회원 이메일 로그인, 본사 이메일 로그인, 회원 소셜 로그인, 본사 소셜 로그인을 한 체인에 묶는다.
+ * 회원 이메일 로그인은 회사 없는 토큰만 발급한다. 회사 선택은 POST /user/tenant-entry 이다.
  * 본사 소셜은 /platform/oauth2/authorization 에서 시작하고 본사 토큰만 발급한다.
  * 세션은 STATELESS 이고 CSRF, 폼 로그인, HTTP Basic 은 끈다.
  * 아래에 적은 공개 주소만 통과하고, 나머지는 세션 쿠키가 있어야 한다.
@@ -116,10 +117,10 @@ public class SecurityConfig {
                                            OAuth2AuthorizationRequestResolver authorizationRequestResolver) throws Exception {
 
         // 로그인 필터
-        LoginFilter tenantLogin = new LoginFilter(authenticationManager, LOGIN_URL, true);
-        tenantLogin.setAuthenticationSuccessHandler(
-                new LoginSuccessHandler(authService, sessionCookieFactory, LoginEntrance.TENANT));
-        LoginFilter platformLogin = new LoginFilter(authenticationManager, PLATFORM_LOGIN_URL, false);
+        LoginFilter memberLogin = new LoginFilter(authenticationManager, LOGIN_URL);
+        memberLogin.setAuthenticationSuccessHandler(
+                new LoginSuccessHandler(authService, sessionCookieFactory, null));
+        LoginFilter platformLogin = new LoginFilter(authenticationManager, PLATFORM_LOGIN_URL);
         platformLogin.setAuthenticationSuccessHandler(
                 new LoginSuccessHandler(authService, sessionCookieFactory, LoginEntrance.PLATFORM));
 
@@ -176,7 +177,7 @@ public class SecurityConfig {
                         .successHandler(socialSuccessHandler)
                         .failureHandler(socialFailureHandler)
                 )
-                .addFilterAt(tenantLogin, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(memberLogin, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(platformLogin, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(
                         new SessionCookieAuthenticationFilter(currentSessionUser, platformRoles),

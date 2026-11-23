@@ -56,7 +56,28 @@ public class AuthService {
         return Optional.of(browserSessionDAO.saveNew(issue(accessSub, claims, LoginEntrance.PLATFORM)));
     }
 
-    /** 테넌트 이메일 로그인. 그 테넌트 토큰만 새로 발급한다. 소속이 없으면 비운다. */
+    /**
+     * 로그인된 세션을 그 회사 토큰으로 바꾼다.
+     * 세션이 없으면 empty, 활성 소속이 없으면 false, 바꾸면 true.
+     * 본사 권한이 있던 세션이어도 회사 권한만 남긴다.
+     */
+    public Optional<Boolean> enterTenant(String sessionId, String slug) {
+        Optional<BrowserSession> stored = browserSessionDAO.find(sessionId);
+        if (stored.isEmpty()) {
+            return Optional.empty();
+        }
+        BrowserSession session = stored.get();
+        findAndValidateUser(session.sub());
+        Optional<AccessTokenClaims> claims = loginTokens.tenantClaims(userId(session.sub()), slug);
+        if (claims.isEmpty()) {
+            return Optional.of(false);
+        }
+        refreshTokenDAO.deleteTokenHash(session.refreshToken());
+        browserSessionDAO.save(sessionId, issue(session.sub(), claims.get(), LoginEntrance.TENANT));
+        return Optional.of(true);
+    }
+
+    /** 그 테넌트 토큰으로 새 세션을 연다. 소속이 없으면 비운다. */
     public Optional<String> openTenantSession(String accessSub, String tenantSlug) {
         findAndValidateUser(accessSub);
         Optional<AccessTokenClaims> claims = loginTokens.tenantClaims(userId(accessSub), tenantSlug);

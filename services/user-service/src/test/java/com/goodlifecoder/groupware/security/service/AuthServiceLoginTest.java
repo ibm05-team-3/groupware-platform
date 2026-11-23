@@ -78,6 +78,67 @@ class AuthServiceLoginTest {
     }
 
     @Test
+    void memberLoginIssuesAnEmptyToken() {
+        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+
+        assertThat(authService.openSession(SUB)).isEqualTo("sid");
+
+        BrowserSession saved = savedSession();
+        assertThat(saved.entrance()).isNull();
+        assertThat(saved.tenantId()).isNull();
+        assertThat(issuedClaims().roles()).isEmpty();
+        assertThat(issuedClaims().permissions()).isEmpty();
+        assertThat(issuedClaims().tenantId()).isNull();
+    }
+
+    @Test
+    void tenantEntryReplacesTheSessionWithThatTenantToken() {
+        when(sessions.find("sid")).thenReturn(Optional.of(expired(null, null)));
+        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(loginTokens.tenantClaims(USER_ID, "acme")).thenReturn(Optional.of(tenantClaims()));
+
+        assertThat(authService.enterTenant("sid", "acme")).contains(true);
+
+        verify(refreshTokens).deleteTokenHash("old-refresh");
+        BrowserSession saved = replacedSession();
+        assertThat(saved.entrance()).isEqualTo(LoginEntrance.TENANT);
+        assertThat(saved.tenantId()).isEqualTo(TENANT_ID);
+        assertThat(issuedClaims()).isEqualTo(tenantClaims());
+    }
+
+    @Test
+    void tenantEntryFromAHeadquartersSessionDropsHeadquartersPermissions() {
+        when(sessions.find("sid")).thenReturn(Optional.of(expired(LoginEntrance.PLATFORM, null)));
+        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(loginTokens.tenantClaims(USER_ID, "acme")).thenReturn(Optional.of(tenantClaims()));
+
+        assertThat(authService.enterTenant("sid", "acme")).contains(true);
+
+        assertThat(replacedSession().entrance()).isEqualTo(LoginEntrance.TENANT);
+        assertThat(issuedClaims().permissions()).containsExactly("payroll:read");
+        assertThat(issuedClaims().tenantId()).isEqualTo(TENANT_ID);
+    }
+
+    @Test
+    void tenantEntryWithoutAMembershipLeavesTheSession() {
+        when(sessions.find("sid")).thenReturn(Optional.of(expired(null, null)));
+        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of(), List.of()));
+        when(loginTokens.tenantClaims(USER_ID, "missing")).thenReturn(Optional.empty());
+
+        assertThat(authService.enterTenant("sid", "missing")).contains(false);
+
+        verify(sessions, never()).save(org.mockito.ArgumentMatchers.eq("sid"), any());
+        verify(refreshTokens, never()).deleteTokenHash(any());
+    }
+
+    @Test
+    void tenantEntryWithoutASessionIsEmpty() {
+        when(sessions.find("sid")).thenReturn(Optional.empty());
+
+        assertThat(authService.enterTenant("sid", "acme")).isEmpty();
+    }
+
+    @Test
     void tenantLoginIssuesThatTenantClaimsEvenWhenTheAccountAlsoHasHeadquartersRoles() {
         when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
         when(loginTokens.tenantClaims(USER_ID, "acme")).thenReturn(Optional.of(tenantClaims()));

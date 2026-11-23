@@ -6,5 +6,5 @@ package com.goodlifecoder.groupware.security.dto;
  * @author 조휘재
  * 작성일: 2026-11-23
  */
-public record LoginRequestDTO(String email, String password, String tenant) {
+public record LoginRequestDTO(String email, String password) {
 }
