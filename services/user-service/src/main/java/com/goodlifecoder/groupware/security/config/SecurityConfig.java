@@ -1,5 +1,6 @@
 package com.goodlifecoder.groupware.security.config;
 
+import com.goodlifecoder.groupware.iam.repository.UserPlatformRoleRepository;
 import com.goodlifecoder.groupware.security.filter.LoginFilter;
 import com.goodlifecoder.groupware.security.filter.SessionCookieAuthenticationFilter;
 import com.goodlifecoder.groupware.security.handler.LoginSuccessHandler;
@@ -36,6 +37,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * 이메일 로그인과 소셜 로그인 필터 체인.
  * 세션은 STATELESS 이고 CSRF, 폼 로그인, HTTP Basic 은 끈다.
  * 아래에 적은 공개 주소만 통과하고, 나머지는 세션 쿠키가 있어야 한다.
+ * /platform/** 는 본사 역할이 있어야 한다. 게이트웨이를 우회해도 같다.
  *
  * @author 조휘재
  * 작성일: 2026-10-16
@@ -56,6 +58,7 @@ public class SecurityConfig {
     private final AuthService authService;
     private final SessionCookieFactory sessionCookieFactory;
     private final CurrentSessionUser currentSessionUser;
+    private final UserPlatformRoleRepository platformRoles;
     private final RedisOAuth2AuthorizationRequestRepository authorizationRequestRepository;
 
     /** 이메일 비밀번호 해시. DelegatingPasswordEncoder 를 쓴다. */
@@ -114,6 +117,7 @@ public class SecurityConfig {
                                 "/user/logout",
                                 "/internal/session/access"
                         ).permitAll()
+                        .requestMatchers("/platform/**").hasAuthority(SessionCookieAuthenticationFilter.PLATFORM_AUTHORITY)
                         .requestMatchers(
                                 "/actuator/health",
                                 "/actuator/health/**",
@@ -121,9 +125,11 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(
-                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
-                ))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                        .accessDeniedHandler((request, response, denied) ->
+                                response.setStatus(HttpStatus.FORBIDDEN.value()))
+                )
                 .oauth2Login(oauth -> oauth
                         .authorizationEndpoint(endpoint -> endpoint
                                 .authorizationRequestResolver(authorizationRequestResolver)
@@ -139,7 +145,7 @@ public class SecurityConfig {
                 )
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(
-                        new SessionCookieAuthenticationFilter(currentSessionUser),
+                        new SessionCookieAuthenticationFilter(currentSessionUser, platformRoles),
                         UsernamePasswordAuthenticationFilter.class
                 );
 
