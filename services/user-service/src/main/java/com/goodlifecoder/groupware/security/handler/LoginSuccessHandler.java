@@ -1,8 +1,10 @@
 package com.goodlifecoder.groupware.security.handler;
 
 import com.goodlifecoder.groupware.security.dto.SessionResponseDTO;
+import com.goodlifecoder.groupware.security.filter.LoginFilter;
 import com.goodlifecoder.groupware.security.http.SessionCookieFactory;
 import com.goodlifecoder.groupware.security.service.AuthService;
+import com.goodlifecoder.groupware.security.session.LoginEntrance;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +29,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final AuthService authService;
     private final SessionCookieFactory sessionCookieFactory;
+    private final LoginEntrance entrance;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -36,7 +39,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             throws IOException, ServletException {
         // authentication.getName() => CustomUserDetails 의 getName 과 동일한 값
         String sub = authentication.getName();
-        String sessionId = authService.openSession(sub);
+        String sessionId = entrance == LoginEntrance.PLATFORM
+                ? authService.openPlatformSession(sub).orElse(null)
+                : authService.openTenantSession(sub, String.valueOf(request.getAttribute(LoginFilter.TENANT_SLUG))).orElse(null);
+        if (sessionId == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
 
         response.addHeader(HttpHeaders.SET_COOKIE, sessionCookieFactory.write(sessionId).toString());
         response.setStatus(HttpServletResponse.SC_OK);

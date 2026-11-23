@@ -6,9 +6,11 @@ import com.goodlifecoder.groupware.security.filter.SessionCookieAuthenticationFi
 import com.goodlifecoder.groupware.security.handler.LoginSuccessHandler;
 import com.goodlifecoder.groupware.security.http.CurrentSessionUser;
 import com.goodlifecoder.groupware.security.http.SessionCookieFactory;
+import com.goodlifecoder.groupware.security.oauth.DoorAuthorizationRequestResolver;
 import com.goodlifecoder.groupware.security.oauth.RedisOAuth2AuthorizationRequestRepository;
 import com.goodlifecoder.groupware.security.oauth.ReturnToAuthorizationRequestResolver;
 import com.goodlifecoder.groupware.security.service.AuthService;
+import com.goodlifecoder.groupware.security.session.LoginEntrance;
 import com.goodlifecoder.groupware.security.service.CustomOAuth2UserService;
 import com.goodlifecoder.groupware.security.service.CustomOidcUserService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +36,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * 이메일 로그인과 소셜 로그인 필터 체인.
+ * 테넌트 이메일 로그인, 본사 이메일 로그인, 회원 소셜 로그인, 본사 소셜 로그인을 한 체인에 묶는다.
+ * 본사 소셜은 /platform/oauth2/authorization 에서 시작하고 본사 토큰만 발급한다.
  * 세션은 STATELESS 이고 CSRF, 폼 로그인, HTTP Basic 은 끈다.
  * 아래에 적은 공개 주소만 통과하고, 나머지는 세션 쿠키가 있어야 한다.
  * /platform/** 는 본사 역할이 있어야 한다. 게이트웨이를 우회해도 같다.
@@ -47,7 +50,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private static final String LOGIN_URL = "/user/login";
+    private static final String PLATFORM_LOGIN_URL = "/platform/login";
     private static final String OAUTH_AUTHORIZATION_BASE_URI = "/user/oauth2/authorization";
+    private static final String PLATFORM_OAUTH_AUTHORIZATION_BASE_URI = "/platform/oauth2/authorization";
     private static final String OAUTH_CALLBACK_URI = "/user/oauth2/code/*";
 
     private final AuthenticationSuccessHandler socialSuccessHandler;
@@ -73,13 +78,35 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    /** 소셜 인가 요청. PKCE 를 붙이고 return_to 를 보관한다. */
+    /** 소셜 인가 요청. PKCE 와 return_to 를 붙인다. 본사 시작 주소는 본사 입구로 표시한다. */
     @Bean
     OAuth2AuthorizationRequestResolver authorizationRequestResolver(ClientRegistrationRepository registrations) {
+        return new DoorAuthorizationRequestResolver(
+                memberAuthorizationResolver(registrations),
+                platformAuthorizationResolver(registrations));
+    }
+
+    /** 회원 소셜. 루트 가입 토큰을 인가 요청에 실을 수 있다. */
+    private static OAuth2AuthorizationRequestResolver memberAuthorizationResolver(ClientRegistrationRepository registrations) {
+        return new ReturnToAuthorizationRequestResolver(pkceResolver(registrations, OAUTH_AUTHORIZATION_BASE_URI));
+    }
+
+    /** 본사 소셜. 루트 가입 토큰은 싣지 않는다. */
+    private static OAuth2AuthorizationRequestResolver platformAuthorizationResolver(ClientRegistrationRepository registrations) {
+        return new ReturnToAuthorizationRequestResolver(
+                pkceResolver(registrations, PLATFORM_OAUTH_AUTHORIZATION_BASE_URI),
+                false);
+    }
+
+    /** PKCE 를 붙인 기본 인가 요청 해석기. */
+    private static DefaultOAuth2AuthorizationRequestResolver pkceResolver(
+            ClientRegistrationRepository registrations,
+            String baseUri
+    ) {
         DefaultOAuth2AuthorizationRequestResolver resolver =
-                new DefaultOAuth2AuthorizationRequestResolver(registrations, OAUTH_AUTHORIZATION_BASE_URI);
+                new DefaultOAuth2AuthorizationRequestResolver(registrations, baseUri);
         resolver.setAuthorizationRequestCustomizer(OAuth2AuthorizationRequestCustomizers.withPkce());
-        return new ReturnToAuthorizationRequestResolver(resolver);
+        return resolver;
     }
 
     /** 이메일 로그인 필터와 네이버·구글 로그인을 한 체인에 묶는다. */
@@ -89,8 +116,12 @@ public class SecurityConfig {
                                            OAuth2AuthorizationRequestResolver authorizationRequestResolver) throws Exception {
 
         // 로그인 필터
-        LoginFilter loginFilter = new LoginFilter(authenticationManager, LOGIN_URL);
-        loginFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(authService, sessionCookieFactory));
+        LoginFilter tenantLogin = new LoginFilter(authenticationManager, LOGIN_URL, true);
+        tenantLogin.setAuthenticationSuccessHandler(
+                new LoginSuccessHandler(authService, sessionCookieFactory, LoginEntrance.TENANT));
+        LoginFilter platformLogin = new LoginFilter(authenticationManager, PLATFORM_LOGIN_URL, false);
+        platformLogin.setAuthenticationSuccessHandler(
+                new LoginSuccessHandler(authService, sessionCookieFactory, LoginEntrance.PLATFORM));
 
         // http 설정
         http
@@ -103,6 +134,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/user/login",
+                                "/platform/login",
+                                "/platform/oauth2/authorization/**",
                                 "/user/signup",
                                 "/user/signup/email-verification",
                                 "/user/signup/email-verification/resend",
@@ -143,7 +176,8 @@ public class SecurityConfig {
                         .successHandler(socialSuccessHandler)
                         .failureHandler(socialFailureHandler)
                 )
-                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(tenantLogin, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(platformLogin, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(
                         new SessionCookieAuthenticationFilter(currentSessionUser, platformRoles),
                         UsernamePasswordAuthenticationFilter.class

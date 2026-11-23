@@ -7,6 +7,7 @@ import com.goodlifecoder.groupware.security.dao.RefreshTokenDAO;
 import com.goodlifecoder.groupware.security.entity.CustomUserDetails;
 import com.goodlifecoder.groupware.security.jwt.AccessTokenProvider;
 import com.goodlifecoder.groupware.security.session.BrowserSession;
+import com.goodlifecoder.groupware.security.session.LoginEntrance;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * 브라우저 세션의 발급, 조회, 액세스 토큰 갱신, 로그아웃, 회원 단위 폐기.
@@ -33,13 +35,32 @@ public class AuthService {
     private final RefreshTokenDAO refreshTokenDAO;
     private final BrowserSessionDAO browserSessionDAO;
     private final CustomUserDetailsService userDetailsService;
+    private final LoginTokenService loginTokens;
     private final AuthProperties authProperties;
 
     private final UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
 
-    /** 새 세션을 만들고 세션 번호를 돌려준다. 로그인은 기존 세션을 돌리지 않는다. */
+    /** 회원 소셜 로그인 세션. 본사 역할이 있어도 본사 토큰을 발급하지 않는다. */
     public String openSession(String accessSub) {
-        return browserSessionDAO.saveNew(issue(accessSub));
+        findAndValidateUser(accessSub);
+        return browserSessionDAO.saveNew(issue(accessSub, new AccessTokenClaims(List.of(), List.of(), null), null));
+    }
+
+    /** 본사 이메일 로그인. 본사 역할이 없으면 세션을 열지 않는다. */
+    public Optional<String> openPlatformSession(String accessSub) {
+        UserDetails userDetails = findAndValidateUser(accessSub);
+        AccessTokenClaims claims = claimsOf(userDetails);
+        if (claims.roles().isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(browserSessionDAO.saveNew(issue(accessSub, claims, LoginEntrance.PLATFORM)));
+    }
+
+    /** 테넌트 이메일 로그인. 그 테넌트 토큰만 새로 발급한다. 소속이 없으면 비운다. */
+    public Optional<String> openTenantSession(String accessSub, String tenantSlug) {
+        findAndValidateUser(accessSub);
+        Optional<AccessTokenClaims> claims = loginTokens.tenantClaims(userId(accessSub), tenantSlug);
+        return claims.map(value -> browserSessionDAO.saveNew(issue(accessSub, value, LoginEntrance.TENANT)));
     }
 
     /** 세션의 회원 번호. 세션이 없으면 비운다. */
@@ -72,9 +93,13 @@ public class AuthService {
             return Optional.empty();
         }
 
-        BrowserSession renewed = issue(rotatedSub.get());
-        browserSessionDAO.save(sessionId, renewed);
-        return Optional.of(renewed.accessToken());
+        Optional<BrowserSession> renewed = renew(rotatedSub.get(), session);
+        if (renewed.isEmpty()) {
+            browserSessionDAO.delete(sessionId);
+            return Optional.empty();
+        }
+        browserSessionDAO.save(sessionId, renewed.get());
+        return Optional.of(renewed.get().accessToken());
     }
 
     /** 이 세션과 그 리프레시 토큰만 지운다. */
@@ -94,13 +119,40 @@ public class AuthService {
         browserSessionDAO.clearSessionIndex(userId);
     }
 
-    /** 계정을 확인한 뒤 액세스·리프레시 토큰을 발급해 세션 값을 만든다. */
-    private BrowserSession issue(String accessSub) {
+    /** 같은 입구의 토큰만 다시 발급한다. 테넌트 소속이 없어지면 본사 토큰으로 바꾸지 않는다. */
+    private Optional<BrowserSession> renew(String accessSub, BrowserSession session) {
+        if (session.entrance() == LoginEntrance.TENANT) {
+            if (session.tenantId() == null) {
+                return Optional.empty();
+            }
+            findAndValidateUser(accessSub);
+            return loginTokens.tenantClaims(userId(accessSub), session.tenantId())
+                    .map(value -> issue(accessSub, value, LoginEntrance.TENANT));
+        }
+        if (session.entrance() != LoginEntrance.PLATFORM) {
+            findAndValidateUser(accessSub);
+            return Optional.of(issue(accessSub, new AccessTokenClaims(List.of(), List.of(), null), null));
+        }
         UserDetails userDetails = findAndValidateUser(accessSub);
+        AccessTokenClaims claims = claimsOf(userDetails);
+        if (claims.roles().isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(issue(accessSub, claims, LoginEntrance.PLATFORM));
+    }
+
+    /** 계정을 확인한 뒤 그 입구의 액세스·리프레시 토큰을 발급해 세션 값을 만든다. */
+    private BrowserSession issue(String accessSub, AccessTokenClaims claims, LoginEntrance entrance) {
         Instant accessExpiresAt = Instant.now().plus(authProperties.accessTokenExpiration());
         String refreshToken = refreshTokenDAO.generateAndSave(accessSub);
-        String accessToken = accessTokenProvider.issueAccessToken(accessSub, claimsOf(userDetails));
-        return new BrowserSession(accessSub, refreshToken, accessToken, accessExpiresAt.toEpochMilli());
+        String accessToken = accessTokenProvider.issueAccessToken(accessSub, claims);
+        return new BrowserSession(
+                accessSub,
+                refreshToken,
+                accessToken,
+                accessExpiresAt.toEpochMilli(),
+                entrance,
+                claims.tenantId());
     }
 
     /** 만료 시각에서 갱신 여유를 뺀 시각이 아직 미래면 true. */
@@ -121,5 +173,10 @@ public class AuthService {
         UserDetails userDetails = userDetailsService.loadUserById(accessSub);
         userDetailsChecker.check(userDetails);
         return userDetails;
+    }
+
+    /** 세션 회원 번호는 UUID 문자열이다. */
+    private static UUID userId(String accessSub) {
+        return UUID.fromString(accessSub);
     }
 }

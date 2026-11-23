@@ -2,6 +2,7 @@ package com.goodlifecoder.groupware.security.handler;
 
 import com.goodlifecoder.groupware.common.config.AppProperties;
 import com.goodlifecoder.groupware.security.http.SessionCookieFactory;
+import com.goodlifecoder.groupware.security.oauth.LoginEntranceOAuth;
 import com.goodlifecoder.groupware.security.oauth.SocialReturnPath;
 import com.goodlifecoder.groupware.security.service.AuthService;
 import jakarta.servlet.ServletException;
@@ -16,7 +17,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
- * 소셜 로그인 성공. 같은 세션 쿠키를 심고 user-web 의 return_to 로 보낸다.
+ * 소셜 로그인 성공. 세션 쿠키를 심고 user-web 의 return_to 로 보낸다.
+ * 본사 소셜은 본사 토큰만 발급하고, 본사 역할이 없으면 쿠키 없이 프론트로 보낸다.
  *
  * @author 조휘재
  * 작성일: 2026-11-23
@@ -34,7 +36,13 @@ public class SocialSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         // authentication.getName() => CustomOAuth2User 의 getName 과 동일한 값
         String sub = authentication.getName();
-        String sessionId = authService.openSession(sub);
+        String sessionId = LoginEntranceOAuth.platform(request)
+                ? authService.openPlatformSession(sub).orElse(null)
+                : authService.openSession(sub);
+        if (sessionId == null) {
+            response.sendRedirect(appProperties.frontend().url());
+            return;
+        }
 
         response.addHeader(HttpHeaders.SET_COOKIE, sessionCookieFactory.write(sessionId).toString());
         response.sendRedirect(SocialReturnPath.redirect(appProperties.frontend().url(), request));

@@ -13,10 +13,17 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 public final class ReturnToAuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
 
     private final OAuth2AuthorizationRequestResolver delegate;
+    private final boolean rootSignup;
 
-    /** PKCE 가 이미 붙은 해석기에 return_to 보관을 얹는다. */
+    /** PKCE 가 이미 붙은 해석기에 return_to 와 루트 가입 토큰 보관을 얹는다. */
     public ReturnToAuthorizationRequestResolver(OAuth2AuthorizationRequestResolver delegate) {
+        this(delegate, true);
+    }
+
+    /** 본사 소셜은 루트 가입 토큰을 싣지 않는다. */
+    public ReturnToAuthorizationRequestResolver(OAuth2AuthorizationRequestResolver delegate, boolean rootSignup) {
         this.delegate = delegate;
+        this.rootSignup = rootSignup;
     }
 
     /** 등록 id 없이 해석한 요청에 return_to 를 붙인다. */
@@ -32,14 +39,16 @@ public final class ReturnToAuthorizationRequestResolver implements OAuth2Authori
     }
 
     /** 안전한 return_to 만 속성으로 넣는다. authorizationRequestUri 는 유지한다. */
-    private static OAuth2AuthorizationRequest attach(
+    private OAuth2AuthorizationRequest attach(
             OAuth2AuthorizationRequest authorizationRequest,
             HttpServletRequest request
     ) {
         if (authorizationRequest == null) {
             return null;
         }
-        OAuth2AuthorizationRequest withRootSignup = RootSignupOAuth.attach(authorizationRequest, request);
+        OAuth2AuthorizationRequest withRootSignup = rootSignup
+                ? RootSignupOAuth.attach(authorizationRequest, request)
+                : authorizationRequest;
         String returnTo = SocialReturnPath.sanitize(request.getParameter(SocialReturnPath.ATTRIBUTE));
         if (returnTo == null) {
             return withRootSignup;

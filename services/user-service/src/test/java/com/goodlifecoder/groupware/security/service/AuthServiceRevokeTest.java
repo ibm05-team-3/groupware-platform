@@ -1,5 +1,6 @@
 package com.goodlifecoder.groupware.security.service;
 
+import com.goodlifecoder.groupware.security.config.AuthProperties;
 import com.goodlifecoder.groupware.security.dao.BrowserSessionDAO;
 import com.goodlifecoder.groupware.security.dao.RefreshTokenDAO;
 import com.goodlifecoder.groupware.security.jwt.AccessTokenProvider;
@@ -23,7 +24,8 @@ class AuthServiceRevokeTest {
             refreshTokenDAO,
             browserSessionDAO,
             mock(CustomUserDetailsService.class),
-            new com.goodlifecoder.groupware.security.config.AuthProperties(
+            mock(LoginTokenService.class),
+            new AuthProperties(
                     null, null, null, null, Duration.ofMinutes(15), Duration.ofDays(7), Duration.ofSeconds(15)
             )
     );
@@ -44,6 +46,6 @@ class AuthServiceRevokeTest {
     }
 
     private static BrowserSession session(String refreshToken) {
-        return new BrowserSession("7", refreshToken, "access", 1L);
+        return new BrowserSession("7", refreshToken, "access", 1L, null, null);
     }
 }

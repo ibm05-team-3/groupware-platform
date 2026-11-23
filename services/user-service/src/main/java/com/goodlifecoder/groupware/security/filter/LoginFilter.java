@@ -25,12 +25,16 @@ import java.io.IOException;
  */
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    public static final String TENANT_SLUG = "login.tenant";
 
-    /** 로그인 URL 과 인증 매니저를 묶는다. */
-    public LoginFilter(AuthenticationManager authenticationManager, String loginUrl) {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final boolean requireTenant;
+
+    /** 로그인 URL 과 인증 매니저를 묶는다. 테넌트 입구는 slug 가 있어야 한다. */
+    public LoginFilter(AuthenticationManager authenticationManager, String loginUrl, boolean requireTenant) {
         super(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, loginUrl),
                 authenticationManager);
+        this.requireTenant = requireTenant;
     }
 
     /** Content-Type 이 JSON 이 아니면 거부한다. */
@@ -45,6 +49,11 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
         }
 
         LoginRequestDTO loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequestDTO.class);
+        String tenant = loginRequest.tenant() == null ? "" : loginRequest.tenant().trim();
+        if (requireTenant && tenant.isEmpty()) {
+            throw new AuthenticationServiceException("tenant is required");
+        }
+        request.setAttribute(TENANT_SLUG, tenant);
 
         UsernamePasswordAuthenticationToken authRequest =
                 new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password());
