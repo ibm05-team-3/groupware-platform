@@ -11,9 +11,6 @@ spring:
       fail-fast: true
   profiles:
     active: dev
-  grpc:
-    server:
-      port: 9082
 
   datasource:
     driver-class-name: org.postgresql.Driver

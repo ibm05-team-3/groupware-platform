@@ -18,7 +18,7 @@ IBM 5기 3팀 AI 에이전트 그룹웨어 SaaS 플랫폼
 | 설정 전파 | Spring Cloud Bus + RabbitMQ |
 | RDBMS | PostgreSQL 17 + pgvector |
 | 캐시 | Redis |
-| 서비스 간 통신 | gRPC (동기), Kafka (비동기, KRaft) |
+| 서비스 간 통신 | RestClient + @HttpExchange (동기), Kafka (비동기, KRaft) |
 | Frontend | React + Vite + React Router + Tailwind CSS 4 |
 | CI/CD 파이프라인 | ArgoCD |
 | 컨테이너화 및 배포 | Docker + Kubernetes |

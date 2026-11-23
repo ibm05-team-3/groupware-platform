@@ -1,6 +1,5 @@
 package com.goodlifecoder.groupware.security.controller;
 
-import com.goodlifecoder.groupware.iam.repository.UserPlatformRoleRepository;
 import com.goodlifecoder.groupware.security.dto.AccessTokenResponse;
 import com.goodlifecoder.groupware.security.dto.SessionResponseDTO;
 import com.goodlifecoder.groupware.security.http.SessionCookieFactory;
@@ -33,7 +32,6 @@ public class AuthController {
     private final AuthService authService;
     private final SessionCookieFactory sessionCookieFactory;
     private final UserRepository userRepository;
-    private final UserPlatformRoleRepository platformRoles;
 
     /** 세션 쿠키가 있으면 로그인 여부, 회원 번호, 닉네임을 돌려준다. 없으면 401. */
     @GetMapping("/user/session")
@@ -52,18 +50,12 @@ public class AuthController {
                 .map(user -> new SessionResponseDTO(true, userId, blankToNull(user.getNickname())));
     }
 
-    /** 본사 세션 확인. 쿠키가 없으면 401, PLATFORM 역할이 없으면 403, 맞으면 본문 없이 204. */
+    /**
+     * 본사 세션 확인. 맞으면 본문 없이 204.
+     * 세션이 없으면 401, 본사 역할이 없으면 403 은 필터와 보안 설정이 돌려준다.
+     */
     @GetMapping("/platform/session")
-    public ResponseEntity<Void> adminSession(HttpServletRequest request) {
-        Optional<UUID> userId = sessionCookieFactory.read(request)
-                .flatMap(authService::sessionSubject)
-                .flatMap(AuthController::userId);
-        if (userId.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        if (!platformRoles.existsByIdUserId(userId.get())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+    public ResponseEntity<Void> adminSession() {
         return ResponseEntity.noContent().build();
     }
 
