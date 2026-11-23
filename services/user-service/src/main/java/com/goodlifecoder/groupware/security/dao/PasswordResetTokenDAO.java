@@ -2,6 +2,7 @@ package com.goodlifecoder.groupware.security.dao;
 
 import com.goodlifecoder.groupware.common.config.MailProperties;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class PasswordResetTokenDAO {
     private final MailProperties mailProperties;
 
     /** 새 원문 토큰을 만들고 해시만 저장한다. 같은 회원의 이전 토큰은 지운다. */
-    public String issue(long userId) {
+    public String issue(UUID userId) {
         String raw = RefreshTokenDAO.generateOpaqueRefreshToken();
         String hash = RefreshTokenDAO.hash(raw);
         String userKey = USER_PREFIX + userId;
@@ -31,13 +32,13 @@ public class PasswordResetTokenDAO {
         if (previous != null) {
             redis.delete(TOKEN_PREFIX + previous);
         }
-        redis.opsForValue().set(TOKEN_PREFIX + hash, Long.toString(userId), mailProperties.resetTokenTtl());
+        redis.opsForValue().set(TOKEN_PREFIX + hash, userId.toString(), mailProperties.resetTokenTtl());
         redis.opsForValue().set(userKey, hash, mailProperties.resetTokenTtl());
         return raw;
     }
 
     /** 원문 토큰을 한 번 쓰고 지운다. 없거나 이미 썼으면 비운다. */
-    public Optional<Long> consume(String rawToken) {
+    public Optional<UUID> consume(String rawToken) {
         if (rawToken == null || rawToken.isBlank()) {
             return Optional.empty();
         }
@@ -52,14 +53,14 @@ public class PasswordResetTokenDAO {
             redis.delete(userKey);
         }
         try {
-            return Optional.of(Long.valueOf(userId));
-        } catch (NumberFormatException ex) {
+            return Optional.of(UUID.fromString(userId));
+        } catch (IllegalArgumentException ex) {
             return Optional.empty();
         }
     }
 
     /** 그 회원의 재설정 토큰을 지운다. */
-    public void revoke(long userId) {
+    public void revoke(UUID userId) {
         String hash = redis.opsForValue().getAndDelete(USER_PREFIX + userId);
         if (hash != null) {
             redis.delete(TOKEN_PREFIX + hash);

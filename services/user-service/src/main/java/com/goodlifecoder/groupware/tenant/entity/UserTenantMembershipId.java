@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class UserTenantMembershipId implements Serializable {
 
     @Column(name = "user_id")
-    private Long userId;
+    private UUID userId;
 
     @Column(name = "tenant_id")
     private UUID tenantId;

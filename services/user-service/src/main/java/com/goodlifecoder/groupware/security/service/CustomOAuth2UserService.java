@@ -4,10 +4,10 @@ import com.goodlifecoder.groupware.security.oauth.RootSignupOAuth;
 import com.goodlifecoder.groupware.security.service.SignupService.EmailAlreadyUsedException;
 import com.goodlifecoder.groupware.security.service.SignupService.InvalidSignupException;
 import com.goodlifecoder.groupware.security.service.SignupService.InvalidSignupTokenException;
-import com.goodlifecoder.groupware.user.entity.Role;
 import com.goodlifecoder.groupware.user.entity.SocialProviderType;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.entity.UserSocialAccountEntity;
+import com.goodlifecoder.groupware.user.entity.UserSocialAccountId;
 import com.goodlifecoder.groupware.user.repository.SocialAccountRepository;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import com.goodlifecoder.groupware.security.entity.CustomOAuth2User;
@@ -22,11 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * 네이버 로그인과, OIDC 가 넘긴 프로필을 로컬 회원에 연결한다.
- * 처음이면 USER 로 만들고 닉네임과 소셜 계정을 저장한다.
+ * 처음이면 회원과 소셜 계정을 저장한다.
  * 이미 연결된 계정은 이후 로그인에서 프로필을 덮어쓰지 않는다.
  *
  * @author 조휘재
@@ -58,7 +57,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return loadLinkedUser(registrationId, attributes);
     }
 
-    /** 제공자 id 로 소셜 계정을 찾거나 만든다. 키는 NAVER_{id}, GOOGLE_{sub} 이다. */
+    /** 제공자와 제공자 id 로 소셜 계정을 찾거나 만든다. */
     @Transactional
     public CustomOAuth2User loadLinkedUser(String registrationId, Map<String, Object> attributes) {
         SocialProviderType registration;
@@ -74,29 +73,27 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("지원하지 않은 소셜 로그인입니다.");
         }
 
-        String socialId = registrationName + "_" + providerId;
+        UserSocialAccountId socialId = new UserSocialAccountId(registration, providerId);
         String rootSignupToken = RootSignupOAuth.currentToken();
         if (rootSignupToken != null) {
-            return completeRootSignup(rootSignupToken, attributes, socialId, registration, providerId);
+            return completeRootSignup(rootSignupToken, attributes, socialId);
         }
         return socialAccountRepository.findById(socialId)
                 .map(account -> new CustomOAuth2User(attributes, account.getUser()))
-                .orElseGet(() -> createSocialUser(socialId, registration, providerId, attributes));
+                .orElseGet(() -> createSocialUser(socialId, attributes));
     }
 
     /** 확인된 루트 가입 이메일과 같은 소셜 계정이면 회원을 만들거나 연결한다. */
     private CustomOAuth2User completeRootSignup(
             String signupToken,
             Map<String, Object> attributes,
-            String socialId,
-            SocialProviderType registration,
-            String providerId
+            UserSocialAccountId socialId
     ) {
         String providerEmail = optionalText(attributes, "email").orElse(null);
         String name = optionalText(attributes, "name").orElse(null);
         try {
             UserEntity user = rootSignupService.completeWithSocial(
-                    signupToken, providerEmail, name, socialId, registration, providerId);
+                    signupToken, providerEmail, name, socialId);
             return new CustomOAuth2User(attributes, user);
         } catch (InvalidSignupTokenException ex) {
             throw new OAuth2AuthenticationException("루트 가입 토큰이 없거나 만료됐습니다.");
@@ -108,22 +105,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     /** 소셜 첫 가입. 제공자 이름은 닉네임으로 둔다. */
-    private CustomOAuth2User createSocialUser(
-            String socialId,
-            SocialProviderType registration,
-            String providerId,
-            Map<String, Object> attributes
-    ) {
+    private CustomOAuth2User createSocialUser(UserSocialAccountId socialId, Map<String, Object> attributes) {
         String name = optionalText(attributes, "name").orElse(null);
         UserEntity user = userRepository.save(UserEntity.builder()
                 .nickname(name)
-                .roles(Set.of(Role.defaultAccountRole()))
                 .build());
         socialAccountRepository.save(UserSocialAccountEntity.builder()
                 .id(socialId)
                 .user(user)
-                .providerType(registration)
-                .providerId(providerId)
                 .build());
         return new CustomOAuth2User(attributes, user);
     }

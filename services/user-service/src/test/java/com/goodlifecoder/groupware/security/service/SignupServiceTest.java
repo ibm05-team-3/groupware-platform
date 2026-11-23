@@ -18,6 +18,7 @@ import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.when;
 
 class SignupServiceTest {
 
+    private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000007");
     private static final String EMAIL = "person@gmail.com";
     private static final String IP = "203.0.113.5";
 
@@ -123,7 +125,7 @@ class SignupServiceTest {
 
         service.signup(EMAIL, "secret", IP);
 
-        verify(cleanup).deleteUnverified(7L);
+        verify(cleanup).deleteUnverified(USER_ID);
         verify(pending).save(EMAIL, "{noop}secret", PendingSignupStore.RETENTION);
     }
 
@@ -136,7 +138,7 @@ class SignupServiceTest {
 
         service.signup(EMAIL, "secret", IP);
 
-        verify(cleanup).deleteUnverified(7L);
+        verify(cleanup).deleteUnverified(USER_ID);
         verify(pending).save(EMAIL, "{noop}secret", Duration.ofDays(3));
         verify(mail).send(eq(EMAIL), any());
     }
@@ -189,7 +191,7 @@ class SignupServiceTest {
         service.resend(EMAIL, IP);
 
         verify(pending).save(EMAIL, "{noop}old", Duration.ofDays(3));
-        verify(cleanup).deleteUnverified(7L);
+        verify(cleanup).deleteUnverified(USER_ID);
         verify(mail).send(eq(EMAIL), any());
         verifyNoInteractions(encoder);
     }
@@ -273,7 +275,7 @@ class SignupServiceTest {
 
     private static UserEntity account(boolean enabled) {
         return UserEntity.builder()
-                .id(7L)
+                .id(USER_ID)
                 .enabled(enabled)
                 .email(EMAIL)
                 .password("{noop}old")

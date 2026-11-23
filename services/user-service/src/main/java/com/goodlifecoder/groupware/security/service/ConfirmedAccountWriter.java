@@ -1,10 +1,8 @@
 package com.goodlifecoder.groupware.security.service;
 
 import com.goodlifecoder.groupware.security.service.SignupService.EmailAlreadyUsedException;
-import com.goodlifecoder.groupware.user.entity.Role;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -27,7 +25,6 @@ public class ConfirmedAccountWriter {
     public void insert(String email, String passwordHash) {
         try {
             userRepository.saveAndFlush(UserEntity.builder()
-                    .roles(Set.of(Role.defaultAccountRole()))
                     .enabled(true)
                     .email(email)
                     .password(passwordHash)

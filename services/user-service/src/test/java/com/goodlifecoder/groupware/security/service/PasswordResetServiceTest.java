@@ -10,6 +10,7 @@ import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.when;
 class PasswordResetServiceTest {
 
     private static final String IP = "203.0.113.5";
+    private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000007");
 
     private final UserRepository users = mock(UserRepository.class);
     private final PasswordResetTokenDAO tokens = mock(PasswordResetTokenDAO.class);
@@ -48,12 +50,12 @@ class PasswordResetServiceTest {
         PasswordResetService service = service(true);
         when(limits.allow("resident-a@test.com", IP)).thenReturn(true);
         when(users.findByEmail("resident-a@test.com")).thenReturn(Optional.of(account()));
-        when(tokens.issue(7L)).thenReturn("raw-token");
+        when(tokens.issue(USER_ID)).thenReturn("raw-token");
 
         service.requestReset("  Resident-A@test.com ", IP);
 
         verify(mail).send(
-                7L,
+                USER_ID,
                 "resident-a@test.com",
                 "http://localhost:5173/password-reset?token=raw-token");
     }
@@ -84,29 +86,29 @@ class PasswordResetServiceTest {
         PasswordResetService service = service(true);
         when(limits.allow("resident-a@test.com", IP)).thenReturn(true);
         when(users.findByEmail("resident-a@test.com")).thenReturn(Optional.of(account()));
-        when(tokens.issue(7L)).thenReturn("raw-token");
+        when(tokens.issue(USER_ID)).thenReturn("raw-token");
         doThrow(new RejectedExecutionException("full"))
                 .when(mail)
-                .send(7L, "resident-a@test.com", "http://localhost:5173/password-reset?token=raw-token");
+                .send(USER_ID, "resident-a@test.com", "http://localhost:5173/password-reset?token=raw-token");
 
         service.requestReset("resident-a@test.com", IP);
 
-        verify(tokens).revoke(7L);
+        verify(tokens).revoke(USER_ID);
     }
 
     @Test
     void confirmReplacesPasswordAndRevokesSessions() {
         PasswordResetService service = service(true);
         UserEntity account = account();
-        when(tokens.consume("raw-token")).thenReturn(Optional.of(7L));
-        when(users.findById(7L)).thenReturn(Optional.of(account));
+        when(tokens.consume("raw-token")).thenReturn(Optional.of(USER_ID));
+        when(users.findById(USER_ID)).thenReturn(Optional.of(account));
         when(encoder.encode("new-secret")).thenReturn("{noop}new-secret");
 
         service.confirm("raw-token", "new-secret");
 
         assertThat(account.getPassword()).isEqualTo("{noop}new-secret");
         verify(users).save(account);
-        verify(auth).revokeUser("7", null);
+        verify(auth).revokeUser(USER_ID.toString(), null);
     }
 
     @Test
@@ -136,7 +138,7 @@ class PasswordResetServiceTest {
 
     private static UserEntity account() {
         return UserEntity.builder()
-                .id(7L)
+                .id(USER_ID)
                 .email("resident-a@test.com")
                 .password("{noop}old")
                 .build();

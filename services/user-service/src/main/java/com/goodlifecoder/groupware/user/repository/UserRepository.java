@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 회원.
@@ -17,10 +18,10 @@ import java.util.Optional;
  * 작성일: 2026-10-16
  */
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
-    /** id가 큰 회원부터 모두 읽는다. */
-    List<UserEntity> findAllByOrderByIdDesc();
+    /** 최근 가입부터 읽는다. UUID 는 가입 순서가 아니다. */
+    List<UserEntity> findAllByOrderByCreatedAtDescIdDesc();
 
     /** 이메일로 회원을 찾는다. 이메일은 저장 전에 소문자로 맞춘다. */
     Optional<UserEntity> findByEmail(String email);

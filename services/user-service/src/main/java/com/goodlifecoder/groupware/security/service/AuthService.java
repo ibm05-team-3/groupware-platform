@@ -1,8 +1,10 @@
 package com.goodlifecoder.groupware.security.service;
 
+import com.goodlifecoder.groupware.iam.entity.RoleScope;
 import com.goodlifecoder.groupware.security.config.AuthProperties;
 import com.goodlifecoder.groupware.security.dao.BrowserSessionDAO;
 import com.goodlifecoder.groupware.security.dao.RefreshTokenDAO;
+import com.goodlifecoder.groupware.security.entity.CustomUserDetails;
 import com.goodlifecoder.groupware.security.jwt.AccessTokenProvider;
 import com.goodlifecoder.groupware.security.session.BrowserSession;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -96,13 +99,24 @@ public class AuthService {
         UserDetails userDetails = findAndValidateUser(accessSub);
         Instant accessExpiresAt = Instant.now().plus(authProperties.accessTokenExpiration());
         String refreshToken = refreshTokenDAO.generateAndSave(accessSub);
-        String accessToken = accessTokenProvider.issueAccessToken(accessSub, userDetails.getAuthorities());
+        String accessToken = accessTokenProvider.issueAccessToken(
+                accessSub,
+                userDetails.getAuthorities(),
+                scopesOf(userDetails));
         return new BrowserSession(accessSub, refreshToken, accessToken, accessExpiresAt.toEpochMilli());
     }
 
     /** 만료 시각에서 갱신 여유를 뺀 시각이 아직 미래면 true. */
     private boolean accessStillValid(BrowserSession session) {
         return session.accessExpiresAtEpochMilli() - authProperties.accessTokenRefreshSkew().toMillis() > Instant.now().toEpochMilli();
+    }
+
+    /** 본사 역할이 있으면 PLATFORM 스코프만 싣는다. */
+    private static List<String> scopesOf(UserDetails userDetails) {
+        if (userDetails instanceof CustomUserDetails details && details.hasPlatformScope()) {
+            return List.of(RoleScope.PLATFORM.name());
+        }
+        return List.of();
     }
 
     /** 회원 번호로 계정을 읽고 잠금·비활성 여부를 확인한다. */

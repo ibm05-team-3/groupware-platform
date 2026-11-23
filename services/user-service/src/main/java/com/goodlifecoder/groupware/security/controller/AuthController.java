@@ -1,10 +1,10 @@
 package com.goodlifecoder.groupware.security.controller;
 
+import com.goodlifecoder.groupware.iam.repository.UserPlatformRoleRepository;
 import com.goodlifecoder.groupware.security.dto.AccessTokenResponse;
 import com.goodlifecoder.groupware.security.dto.SessionResponseDTO;
 import com.goodlifecoder.groupware.security.http.SessionCookieFactory;
 import com.goodlifecoder.groupware.security.service.AuthService;
-import com.goodlifecoder.groupware.user.entity.Role;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
-import java.util.Set;
+import java.util.UUID;
 
 /**
  * 세션 확인, 로그아웃, 게이트웨이용 액세스 토큰 조회.
@@ -33,6 +33,7 @@ public class AuthController {
     private final AuthService authService;
     private final SessionCookieFactory sessionCookieFactory;
     private final UserRepository userRepository;
+    private final UserPlatformRoleRepository platformRoles;
 
     /** 세션 쿠키가 있으면 로그인 여부, 회원 번호, 닉네임을 돌려준다. 없으면 401. */
     @GetMapping("/user/session")
@@ -44,42 +45,35 @@ public class AuthController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
-    /** 세션의 회원 번호로 닉네임을 찾아 응답을 만든다. 번호가 아니면 비운다. */
+    /** 세션의 회원 id로 닉네임을 찾아 응답을 만든다. UUID가 아니면 비운다. */
     private Optional<SessionResponseDTO> sessionResponse(String userId) {
-        long id;
-        try {
-            id = Long.parseLong(userId);
-        } catch (NumberFormatException ex) {
-            return Optional.empty();
-        }
-        return userRepository.findById(id)
+        return userId(userId)
+                .flatMap(userRepository::findById)
                 .map(user -> new SessionResponseDTO(true, userId, blankToNull(user.getNickname())));
     }
 
-    /** 관리자 세션 확인. 쿠키가 없으면 401, ADMIN 이 아니면 403, 맞으면 본문 없이 204. */
-    @GetMapping("/admin/session")
+    /** 본사 세션 확인. 쿠키가 없으면 401, PLATFORM 역할이 없으면 403, 맞으면 본문 없이 204. */
+    @GetMapping("/platform/session")
     public ResponseEntity<Void> adminSession(HttpServletRequest request) {
-        Optional<Set<Role>> roles = sessionCookieFactory.read(request)
+        Optional<UUID> userId = sessionCookieFactory.read(request)
                 .flatMap(authService::sessionSubject)
-                .flatMap(this::accountRoles);
-        if (roles.isEmpty()) {
+                .flatMap(AuthController::userId);
+        if (userId.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (!roles.get().contains(Role.ADMIN)) {
+        if (!platformRoles.existsByIdUserId(userId.get())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.noContent().build();
     }
 
-    /** 세션 주체의 역할. 번호가 아니거나 회원이 없으면 비운다. */
-    private Optional<Set<Role>> accountRoles(String userId) {
-        long id;
+    /** 세션 주체의 회원 id. UUID가 아니면 비운다. */
+    private static Optional<UUID> userId(String value) {
         try {
-            id = Long.parseLong(userId);
-        } catch (NumberFormatException ex) {
+            return Optional.of(UUID.fromString(value));
+        } catch (IllegalArgumentException ex) {
             return Optional.empty();
         }
-        return userRepository.findById(id).map(user -> user.getRoles() == null ? Set.of() : user.getRoles());
     }
 
     /** 빈 닉네임은 JSON 에서 빠지도록 null 로 바꾼다. */

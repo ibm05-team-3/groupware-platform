@@ -1,6 +1,5 @@
 package com.goodlifecoder.groupware.user.config;
 
-import com.goodlifecoder.groupware.user.entity.Role;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -8,10 +7,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
-
 /**
- * dev 프로파일에서만 로컬 관리자 admin@naver.com 이 없으면 ADMIN 으로 한 번 넣는다. 비밀번호는 12341234.
+ * dev 프로파일에서만 로컬 계정 admin@naver.com 이 없으면 한 번 넣는다. 비밀번호는 12341234.
  *
  * @author 조휘재
  * 작성일: 2026-10-16
@@ -35,7 +32,6 @@ public class InitialDataLoader implements CommandLineRunner {
             return;
         }
         memberRepository.save(UserEntity.builder()
-                .roles(Set.of(Role.ADMIN))
                 .email("admin@naver.com")
                 .password(passwordEncoder.encode("12341234"))
                 .build());

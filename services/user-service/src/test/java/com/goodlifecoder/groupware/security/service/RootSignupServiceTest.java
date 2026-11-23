@@ -10,11 +10,13 @@ import com.goodlifecoder.groupware.security.service.SignupService.EmailAlreadyUs
 import com.goodlifecoder.groupware.security.service.SignupService.InvalidSignupException;
 import com.goodlifecoder.groupware.security.service.SignupService.InvalidSignupTokenException;
 import com.goodlifecoder.groupware.user.entity.SocialProviderType;
+import com.goodlifecoder.groupware.user.entity.UserSocialAccountId;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.SocialAccountRepository;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -105,9 +107,7 @@ class RootSignupServiceTest {
                 "signup-token",
                 "other@gmail.com",
                 "루트",
-                "GOOGLE_sub",
-                SocialProviderType.GOOGLE,
-                "sub"))
+                new UserSocialAccountId(SocialProviderType.GOOGLE, "sub")))
                 .isInstanceOf(InvalidSignupException.class);
 
         verify(users, never()).save(any());
@@ -117,11 +117,12 @@ class RootSignupServiceTest {
     @Test
     void socialCreatesAUserWhenTheEmailMatches() {
         when(store.findVerified("signup-token")).thenReturn(Optional.of(EMAIL));
-        when(social.findById("GOOGLE_sub")).thenReturn(Optional.empty());
+        UserSocialAccountId socialId = new UserSocialAccountId(SocialProviderType.GOOGLE, "sub");
+        when(social.findById(socialId)).thenReturn(Optional.empty());
         when(users.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         UserEntity user = service.completeWithSocial(
-                "signup-token", "Root@Acme.com", "루트", "GOOGLE_sub", SocialProviderType.GOOGLE, "sub");
+                "signup-token", "Root@Acme.com", "루트", socialId);
 
         assertThat(user.getEmail()).isEqualTo(EMAIL);
         assertThat(user.getPassword()).isNull();
@@ -131,7 +132,8 @@ class RootSignupServiceTest {
 
     @Test
     void requestRejectsAnEmailThatAlreadyHasAUser() {
-        when(users.findByEmail(EMAIL)).thenReturn(Optional.of(UserEntity.builder().id(1L).email(EMAIL).build()));
+        when(users.findByEmail(EMAIL)).thenReturn(Optional.of(
+                UserEntity.builder().id(UUID.fromString("00000000-0000-0000-0000-000000000001")).email(EMAIL).build()));
 
         assertThatThrownBy(() -> service.request(EMAIL, "203.0.113.5")).isInstanceOf(EmailAlreadyUsedException.class);
         verify(mail, never()).send(any(), any());

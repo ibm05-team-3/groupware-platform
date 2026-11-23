@@ -6,6 +6,7 @@ import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.SocialAccountRepository;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -16,6 +17,8 @@ import static org.mockito.Mockito.when;
 
 class UnverifiedUserDeleterTest {
 
+    private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000007");
+
     private final SocialAccountRepository social = mock(SocialAccountRepository.class);
     private final UserRepository users = mock(UserRepository.class);
     private final SignupEmailCodeStore codes = mock(SignupEmailCodeStore.class);
@@ -24,16 +27,16 @@ class UnverifiedUserDeleterTest {
     @Test
     void deletesADisabledEmailAccount() {
         UserEntity user = UserEntity.builder()
-                .id(7L)
+                .id(USER_ID)
                 .enabled(false)
                 .email("person@gmail.com")
                 .password("{noop}old")
                 .build();
-        when(users.findById(7L)).thenReturn(Optional.of(user));
+        when(users.findById(USER_ID)).thenReturn(Optional.of(user));
 
-        deleter.deleteIfUnverified(7L);
+        deleter.deleteIfUnverified(USER_ID);
 
-        verify(social).deleteByUserId(7L);
+        verify(social).deleteByUserId(USER_ID);
         verify(users).delete(user);
         verify(codes).revoke(Flow.SIGNUP, "person@gmail.com");
     }
@@ -41,14 +44,14 @@ class UnverifiedUserDeleterTest {
     @Test
     void leavesAnEnabledAccount() {
         UserEntity user = UserEntity.builder()
-                .id(7L)
+                .id(USER_ID)
                 .enabled(true)
                 .email("person@gmail.com")
                 .password("{noop}old")
                 .build();
-        when(users.findById(7L)).thenReturn(Optional.of(user));
+        when(users.findById(USER_ID)).thenReturn(Optional.of(user));
 
-        deleter.deleteIfUnverified(7L);
+        deleter.deleteIfUnverified(USER_ID);
 
         verify(users, never()).delete(user);
         verify(codes, never()).revoke(any(), any());

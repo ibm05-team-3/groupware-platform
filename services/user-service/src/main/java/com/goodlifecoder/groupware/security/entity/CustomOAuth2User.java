@@ -27,7 +27,7 @@ public class CustomOAuth2User implements OAuth2User {
     public CustomOAuth2User(Map<String, Object> attributes, UserEntity user) {
         this.sub = String.valueOf(user.getId());
         this.attributes = Map.copyOf(attributes);
-        this.authorities = CustomUserDetails.toAuthorities(user.getRoles());
+        this.authorities = List.of();
     }
 
     /** 로컬 회원 번호. */
@@ -42,7 +42,7 @@ public class CustomOAuth2User implements OAuth2User {
         return attributes;
     }
 
-    /** 로컬 회원의 ROLE_ 권한. */
+    /** 빈 목록. 세션 토큰은 이 목록을 쓰지 않고, 회원 id로 다시 읽은 CustomUserDetails 에서 만든다. */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

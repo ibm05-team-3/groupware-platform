@@ -10,7 +10,6 @@ metadata:
 data:
   01-databases.sql: |
     -- 빈 데이터베이스만 만든다. schema.sql 은 infra/schema-job.yaml 이 각 DB에 적용한다.
-    -- schema-dev.sql 은 DROP DATABASE 가 있어 여기서 실행하지 않는다.
     CREATE DATABASE user_service;
 ---
 apiVersion: v1

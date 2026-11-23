@@ -23,7 +23,8 @@ import java.time.Instant;
 import java.util.*;
 
 /**
- * ES256 액세스 토큰 발급. subject 는 회원 번호 문자열이고 roles 클레임에 권한을 싣는다.
+ * ES256 액세스 토큰 발급. subject 는 회원 번호 문자열이다.
+ * roles 클레임에는 역할 코드를, scope 클레임에는 PLATFORM 같은 범위를 싣는다.
  *
  * @author 조휘재
  * 작성일: 2026-10-16
@@ -36,24 +37,29 @@ public class AccessTokenProvider {
     private JwtEncoder jwtEncoder;
     private JwsHeader header;
 
-    /** 권한을 roles 클레임으로 넣어 서명한다. */
-    public String issueAccessToken(String sub, Collection<? extends GrantedAuthority> authorities) {
+    /** 역할과 스코프를 클레임으로 넣어 서명한다. 스코프가 없으면 scope 클레임을 빼는다. */
+    public String issueAccessToken(
+            String sub,
+            Collection<? extends GrantedAuthority> authorities,
+            Collection<String> scopes) {
         Instant now = Instant.now();
 
         List<String> roles = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        JwtClaimsSet claims = JwtClaimsSet.builder()
+        JwtClaimsSet.Builder claims = JwtClaimsSet.builder()
                 .subject(sub)
                 .issuedAt(now)
                 .expiresAt(now.plus(authProperties.accessTokenExpiration()))
                 .id(UUID.randomUUID().toString())
                 .issuer(authProperties.accessTokenIssuer())
-                .claim("roles", roles)
-                .build();
+                .claim("roles", roles);
+        if (scopes != null && !scopes.isEmpty()) {
+            claims.claim("scope", List.copyOf(scopes));
+        }
 
-        return jwtEncoder.encode(JwtEncoderParameters.from(header, claims))
+        return jwtEncoder.encode(JwtEncoderParameters.from(header, claims.build()))
                 .getTokenValue();
     }
 

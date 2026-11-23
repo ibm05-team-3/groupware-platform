@@ -8,6 +8,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +46,7 @@ public class UnverifiedSignupCleanup {
     }
 
     /** 확인하지 않은 가입 행을 지운다. 활성 회원은 지우지 않는다. */
-    public void deleteUnverified(Long userId) {
+    public void deleteUnverified(UUID userId) {
         unverifiedUserDeleter.deleteIfUnverified(userId);
     }
 
@@ -61,7 +62,7 @@ public class UnverifiedSignupCleanup {
 
     /** 예전에 비활성 회원으로 만들어 둔 가입을 확인한다. 7일이 지났으면 지운다. */
     @Transactional
-    public void confirmLegacy(long userId) {
+    public void confirmLegacy(UUID userId) {
         UserEntity user = userRepository.findById(userId).orElseThrow(InvalidSignupTokenException::new);
         if (user.isEnabled()) {
             return;

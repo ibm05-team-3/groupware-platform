@@ -4,6 +4,7 @@ import com.goodlifecoder.groupware.security.service.SignupService.EmailAlreadyUs
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -13,6 +14,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SignupAccountWriterTest {
+
+    private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000007");
 
     private final UserRepository users = mock(UserRepository.class);
     private final UnverifiedUserDeleter deleter = mock(UnverifiedUserDeleter.class);
@@ -35,7 +38,7 @@ class SignupAccountWriterTest {
 
         writer.create("person@gmail.com", "{noop}secret");
 
-        verify(deleter).deleteIfUnverified(7L);
+        verify(deleter).deleteIfUnverified(USER_ID);
         verify(confirmed).insert("person@gmail.com", "{noop}secret");
     }
 
@@ -50,7 +53,7 @@ class SignupAccountWriterTest {
 
     private static UserEntity account(boolean enabled) {
         return UserEntity.builder()
-                .id(7L)
+                .id(USER_ID)
                 .enabled(enabled)
                 .email("person@gmail.com")
                 .password("{noop}old")

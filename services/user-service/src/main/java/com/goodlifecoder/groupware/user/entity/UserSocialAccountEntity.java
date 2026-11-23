@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * 소셜 로그인 연결. id 는 NAVER_{providerId} 또는 GOOGLE_{sub} 이다.
+ * 소셜 로그인 연결. 기본 키는 제공자와 그 제공자가 준 id 이다.
  *
  * @author 조휘재
  * 작성일: 2026-10-16
@@ -18,17 +18,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserSocialAccountEntity extends BaseTimeEntity {
-    @Id
-    private String id;
 
+    @EmbeddedId
+    private UserSocialAccountId id;
+
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private SocialProviderType providerType;
-
-    @Column(nullable = false)
-    private String providerId;
 }

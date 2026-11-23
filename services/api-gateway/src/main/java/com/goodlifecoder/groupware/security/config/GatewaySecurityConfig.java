@@ -67,9 +67,9 @@ public class GatewaySecurityConfig {
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .authorizeExchange(auth -> auth
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // user-service 의 공개 주소는 그 서비스 보안 설정에 있다.
+                        .pathMatchers("/*/platform/**").hasAuthority("SCOPE_PLATFORM")
                         .pathMatchers("/user-service/user/**").permitAll()
-                        .pathMatchers("/*/admin/**").hasRole("ADMIN")
+                        // 각 서비스는 JWT 의 permissions 로 권한을 판단한다.
 
                         .anyExchange().authenticated()
                 )
@@ -208,24 +208,30 @@ public class GatewaySecurityConfig {
         ReactiveJwtAuthenticationConverter converter =
                 new ReactiveJwtAuthenticationConverter();
 
-        converter.setJwtGrantedAuthoritiesConverter(this::roles);
+        converter.setJwtGrantedAuthoritiesConverter(this::authorities);
 
         return converter;
     }
 
-    private Flux<GrantedAuthority> roles(Jwt jwt) {
-        List<String> roles = jwt.getClaimAsStringList("roles");
+    /** roles 는 ROLE_, scope 는 SCOPE_ 권한으로 바꾼다. */
+    private Flux<GrantedAuthority> authorities(Jwt jwt) {
+        return Flux.concat(prefixed(jwt, "roles", "ROLE_"), prefixed(jwt, "scope", "SCOPE_"));
+    }
 
-        if (roles == null) {
-            return Flux.empty();
-        }
-
-        return Flux.fromIterable(roles)
-                .map(role ->
-                        role.startsWith("ROLE_")
-                                ? role
-                                : "ROLE_" + role
-                )
+    private static Flux<GrantedAuthority> prefixed(Jwt jwt, String claim, String prefix) {
+        return Flux.fromIterable(stringList(jwt, claim))
+                .map(value -> value.startsWith(prefix) ? value : prefix + value)
                 .map(SimpleGrantedAuthority::new);
+    }
+
+    private static List<String> stringList(Jwt jwt, String claim) {
+        Object value = jwt.getClaim(claim);
+        if (value instanceof List<?> values) {
+            return values.stream().map(String::valueOf).toList();
+        }
+        if (value instanceof String text && !text.isBlank()) {
+            return List.of(text);
+        }
+        return List.of();
     }
 }

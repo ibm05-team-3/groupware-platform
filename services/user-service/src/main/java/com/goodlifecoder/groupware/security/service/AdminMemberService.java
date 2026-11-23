@@ -6,10 +6,10 @@ import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.SocialAccountRepository;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,27 +33,26 @@ public class AdminMemberService {
      */
     @Transactional(readOnly = true)
     public List<AdminMemberResponse> list() {
-        Map<Long, List<String>> providers = new HashMap<>();
+        Map<UUID, List<String>> providers = new HashMap<>();
         for (Object[] row : socialAccountRepository.findUserIdsAndProviders()) {
-            Long userId = (Long) row[0];
+            UUID userId = (UUID) row[0];
             SocialProviderType provider = (SocialProviderType) row[1];
             providers.computeIfAbsent(userId, ignored -> new ArrayList<>()).add(provider.name());
         }
-        return userRepository.findAllByOrderByIdDesc().stream()
+        return userRepository.findAllByOrderByCreatedAtDescIdDesc().stream()
                 .filter(user -> user.isEnabled() || user.getEmail() == null)
                 .map(user -> toResponse(user, providers))
                 .toList();
     }
 
-    /** 역할과 소셜 제공자를 이름순으로 담는다. 이메일이 없으면 null 이다. */
-    private static AdminMemberResponse toResponse(UserEntity user, Map<Long, List<String>> providers) {
-        List<String> roles = user.getRoles().stream().map(Enum::name).sorted(Comparator.naturalOrder()).toList();
+    /** 소셜 제공자를 이름순으로 담는다. 이메일이 없으면 null 이다. */
+    private static AdminMemberResponse toResponse(UserEntity user, Map<UUID, List<String>> providers) {
         List<String> social = providers.getOrDefault(user.getId(), List.of()).stream().sorted().toList();
         return new AdminMemberResponse(
                 user.getId(),
                 user.getNickname(),
                 user.getEmail(),
-                roles,
+                List.of(),
                 social,
                 user.isEnabled(),
                 user.getCreatedAt());

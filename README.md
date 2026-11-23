@@ -6,7 +6,7 @@ IBM 5기 3팀 AI 에이전트 그룹웨어 SaaS 플랫폼
 
 로컬 설치 순서는 [설치 가이드](docs/설치-가이드.md)를 따릅니다.
 
-프론트엔드 문서는 [control-web](frontends/control-web/README.md)과 [hr-web](frontends/hr-web/README.md)에 있습니다.
+프론트엔드 문서는 [platform-web](frontends/platform-web/README.md)과 [tenant-web](frontends/tenant-web/README.md)에 있습니다.
 
 ## 개발 환경
 

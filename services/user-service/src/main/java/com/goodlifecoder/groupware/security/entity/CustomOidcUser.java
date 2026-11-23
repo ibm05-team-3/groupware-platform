@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * 구글 OIDC 로그인 주체.
- * 이름과 권한은 로컬 회원이고, ID 토큰과 userinfo 는 제공자 값 그대로다.
+ * 이름은 로컬 회원 id다. 권한 목록은 비어 있고, ID 토큰과 userinfo 는 제공자 값 그대로다.
  *
  * @author 조휘재
  * 작성일: 2026-10-28
@@ -41,7 +41,7 @@ public class CustomOidcUser implements OidcUser {
         return user.getAttributes();
     }
 
-    /** 로컬 회원의 ROLE_ 권한. */
+    /** 소셜 주체와 같은 빈 목록. */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getAuthorities();

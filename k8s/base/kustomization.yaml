@@ -20,8 +20,8 @@ resources:
   - platform/config-server.yaml
   - platform/api-gateway.yaml
   - platform/user-service.yaml
-  - platform/hr-web.yaml
-  - platform/control-web.yaml
+  - platform/tenant-web.yaml
+  - platform/platform-web.yaml
   - platform/ingress.yaml
   - infra/schema-job.yaml
 images:
@@ -33,9 +33,9 @@ images:
     newTag: latest
   - name: ghcr.io/ibm05-team-3/user-service
     newTag: latest
-  - name: ghcr.io/ibm05-team-3/hr-web
+  - name: ghcr.io/ibm05-team-3/tenant-web
     newTag: latest
-  - name: ghcr.io/ibm05-team-3/control-web
+  - name: ghcr.io/ibm05-team-3/platform-web
     newTag: latest
 configMapGenerator:
   - name: groupware-schema

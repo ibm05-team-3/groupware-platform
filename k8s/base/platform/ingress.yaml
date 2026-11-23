@@ -32,7 +32,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: hr-web
+                name: tenant-web
                 port:
                   number: 80
     - host: admin.darkhanmarie.site
@@ -42,7 +42,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: control-web
+                name: platform-web
                 port:
                   number: 80
     - host: api.darkhanmarie.site

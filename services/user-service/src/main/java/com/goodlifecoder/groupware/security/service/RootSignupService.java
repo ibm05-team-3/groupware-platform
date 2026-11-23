@@ -14,15 +14,13 @@ import com.goodlifecoder.groupware.security.service.SignupService.MailDisabledEx
 import com.goodlifecoder.groupware.security.service.SignupService.MailSendException;
 import com.goodlifecoder.groupware.security.service.SignupService.TooManyAttemptsException;
 import com.goodlifecoder.groupware.security.service.SignupService.TooManyRequestsException;
-import com.goodlifecoder.groupware.user.entity.Role;
-import com.goodlifecoder.groupware.user.entity.SocialProviderType;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.entity.UserSocialAccountEntity;
+import com.goodlifecoder.groupware.user.entity.UserSocialAccountId;
 import com.goodlifecoder.groupware.user.repository.SocialAccountRepository;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import java.time.Duration;
 import java.util.Optional;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -132,7 +130,6 @@ public class RootSignupService {
             userRepository.saveAndFlush(UserEntity.builder()
                     .email(email)
                     .password(passwordEncoder.encode(password))
-                    .roles(Set.of(Role.defaultAccountRole()))
                     .enabled(true)
                     .build());
         } catch (DataIntegrityViolationException ex) {
@@ -151,9 +148,7 @@ public class RootSignupService {
             String signupToken,
             String providerEmail,
             String name,
-            String socialId,
-            SocialProviderType provider,
-            String providerId
+            UserSocialAccountId socialId
     ) {
         String email = rootSignups.findVerified(signupToken).orElseThrow(InvalidSignupTokenException::new);
         String socialEmail = SignupService.normalizeEmail(providerEmail);
@@ -172,14 +167,11 @@ public class RootSignupService {
         UserEntity user = userRepository.findByEmail(email).orElseGet(() -> userRepository.save(UserEntity.builder()
                 .email(email)
                 .nickname(name)
-                .roles(Set.of(Role.defaultAccountRole()))
                 .enabled(true)
                 .build()));
         socialAccountRepository.save(UserSocialAccountEntity.builder()
                 .id(socialId)
                 .user(user)
-                .providerType(provider)
-                .providerId(providerId)
                 .build());
         rootSignups.deleteVerified(signupToken);
         return user;

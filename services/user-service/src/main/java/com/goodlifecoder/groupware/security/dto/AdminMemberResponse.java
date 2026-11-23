@@ -2,6 +2,7 @@ package com.goodlifecoder.groupware.security.dto;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 관리자 화면에 주는 회원 한 줄. 탈퇴하면 email 은 null 이다.
@@ -10,7 +11,7 @@ import java.util.List;
  * 작성일: 2026-11-11
  */
 public record AdminMemberResponse(
-        long id,
+        UUID id,
         String nickname,
         String email,
         List<String> roles,

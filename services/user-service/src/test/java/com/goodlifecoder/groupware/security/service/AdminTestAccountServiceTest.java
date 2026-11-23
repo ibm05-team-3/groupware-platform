@@ -8,6 +8,7 @@ import com.goodlifecoder.groupware.security.service.SignupService.InvalidSignupE
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -19,6 +20,8 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class AdminTestAccountServiceTest {
+
+    private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000007");
 
     private final UserRepository users = mock(UserRepository.class);
     private final PasswordEncoder encoder = mock(PasswordEncoder.class);
@@ -58,7 +61,7 @@ class AdminTestAccountServiceTest {
 
         service.create("person@test.com", "secret");
 
-        verify(cleanup).deleteUnverified(7L);
+        verify(cleanup).deleteUnverified(USER_ID);
         verify(writer).insert("person@test.com", "{noop}secret");
     }
 
@@ -71,7 +74,7 @@ class AdminTestAccountServiceTest {
 
     private static UserEntity account(boolean enabled) {
         return UserEntity.builder()
-                .id(7L)
+                .id(USER_ID)
                 .enabled(enabled)
                 .email("person@test.com")
                 .password("{noop}old")

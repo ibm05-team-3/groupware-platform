@@ -1,10 +1,8 @@
 package com.goodlifecoder.groupware.security.entity;
 
-import com.goodlifecoder.groupware.user.entity.Role;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import lombok.NonNull;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -12,7 +10,7 @@ import java.util.List;
 
 /**
  * 이메일 로그인 주체.
- * getUsername 은 회원 번호 문자열이고, 권한 이름은 ROLE_ 로 시작한다.
+ * getUsername 은 회원 id 문자열이다. 권한은 이 객체에 싣지 않는다.
  *
  * @author 조휘재
  * 작성일: 2026-10-16
@@ -24,28 +22,21 @@ public class CustomUserDetails implements UserDetails {
     private final String password;
     private final boolean enabled;
     private final boolean accountNonLocked;
+    private final boolean platformScope;
 
     /** 회원과 비밀번호 해시로 만든다. 소셜 전용 계정이면 비밀번호는 null. */
-    public CustomUserDetails(UserEntity entity, String password) {
+    public CustomUserDetails(UserEntity entity, String password, boolean platformScope) {
         this.sub = String.valueOf(entity.getId());
         this.password = password;
         this.enabled = entity.isEnabled();
         this.accountNonLocked = entity.isAccountNonLocked();
-        this.authorities = toAuthorities(entity.getRoles());
+        this.authorities = List.of();
+        this.platformScope = platformScope;
     }
 
-    public static final String ROLE = "ROLE_";
-
-    /** ROLE_ 접두사를 붙인 권한 이름. */
-    public static String toAuthorityName(Role role) {
-        return ROLE + role.name();
-    }
-
-    /** 역할 집합을 GrantedAuthority 로 바꾼다. */
-    public static List<GrantedAuthority> toAuthorities(Collection<Role> roles) {
-        return roles.stream()
-                .map(role -> (GrantedAuthority) new SimpleGrantedAuthority(toAuthorityName(role)))
-                .toList();
+    /** 본사 역할이 있으면 true. 액세스 토큰의 scope 에 PLATFORM 을 넣는다. */
+    public boolean hasPlatformScope() {
+        return platformScope;
     }
 
     /** 회원 번호 문자열. 이메일이 아니다. */
@@ -54,7 +45,7 @@ public class CustomUserDetails implements UserDetails {
         return sub;
     }
 
-    /** ROLE_ 이 붙은 권한. */
+    /** 빈 목록. 액세스 토큰의 roles 클레임으로 복사된다. */
     @Override
     public @NonNull Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

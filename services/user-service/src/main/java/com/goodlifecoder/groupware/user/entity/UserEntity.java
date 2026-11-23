@@ -21,8 +21,8 @@ import java.util.*;
 @AllArgsConstructor
 public class UserEntity extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     // 커뮤니티와 헤더에 보여주는 이름. 비어 있을 수 있다.
     @Column(length = 100)
@@ -41,7 +41,7 @@ public class UserEntity extends BaseTimeEntity {
     @Builder.Default
     private boolean enabled = true;
 
-    /** 탈퇴. 로그인을 막고 닉네임, 이메일, 비밀번호를 지운다. 행과 역할은 남긴다. */
+    /** 탈퇴. 로그인을 막고 닉네임, 이메일, 비밀번호를 지운다. 회원 행은 남긴다. */
     public void withdraw() {
         this.enabled = false;
         this.nickname = null;
@@ -68,15 +68,4 @@ public class UserEntity extends BaseTimeEntity {
     @Column(nullable = false)
     @Builder.Default
     private boolean accountNonLocked = true;
-
-    // 계정 역할. GUEST는 비로그인 방문자라 저장하지 않는다.
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id")
-    )
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    @Builder.Default
-    private Set<Role> roles = new HashSet<>();
 }

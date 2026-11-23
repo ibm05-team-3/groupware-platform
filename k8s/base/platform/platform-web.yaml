@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: control-web
+  name: platform-web
   labels:
-    app.kubernetes.io/name: control-web
+    app.kubernetes.io/name: platform-web
     app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "4"
 spec:
   selector:
-    app.kubernetes.io/name: control-web
+    app.kubernetes.io/name: platform-web
   ports:
     - name: http
       port: 80
@@ -18,9 +18,9 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: control-web
+  name: platform-web
   labels:
-    app.kubernetes.io/name: control-web
+    app.kubernetes.io/name: platform-web
     app.kubernetes.io/part-of: groupware-platform
   annotations:
     argocd.argoproj.io/sync-wave: "4"
@@ -28,16 +28,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: control-web
+      app.kubernetes.io/name: platform-web
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: control-web
+        app.kubernetes.io/name: platform-web
         app.kubernetes.io/part-of: groupware-platform
     spec:
       containers:
-        - name: control-web
-          image: ghcr.io/ibm05-team-3/control-web:latest
+        - name: platform-web
+          image: ghcr.io/ibm05-team-3/platform-web:latest
           imagePullPolicy: Always
           ports:
             - name: http

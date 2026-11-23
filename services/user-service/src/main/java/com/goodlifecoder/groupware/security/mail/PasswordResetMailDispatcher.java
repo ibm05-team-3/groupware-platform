@@ -1,6 +1,7 @@
 package com.goodlifecoder.groupware.security.mail;
 
 import com.goodlifecoder.groupware.security.dao.PasswordResetTokenDAO;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -25,7 +26,7 @@ public class PasswordResetMailDispatcher {
 
     /** 응답 이후에 메일을 보낸다. 실패하면 토큰을 지운다. */
     @Async(EXECUTOR)
-    public void send(long userId, String email, String resetUrl) {
+    public void send(UUID userId, String email, String resetUrl) {
         try {
             passwordResetMailSender.send(email, resetUrl);
         } catch (RuntimeException ex) {

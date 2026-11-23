@@ -2,11 +2,11 @@ package com.goodlifecoder.groupware.user.controller;
 
 import com.goodlifecoder.groupware.security.http.CurrentSessionUser;
 import com.goodlifecoder.groupware.user.dto.ProfileResponse;
-import com.goodlifecoder.groupware.user.entity.Role;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.mock.ResidenceMock;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,28 +36,23 @@ public class ProfileController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
-    /** 다른 회원 프로필. 본인이거나 RESIDENT 만 볼 수 있다. */
+    /** 다른 회원 프로필. 본인만 볼 수 있다. */
     @GetMapping("/user/profile/{userId}")
-    public ResponseEntity<ProfileResponse> profileOf(@PathVariable long userId, HttpServletRequest request) {
+    public ResponseEntity<ProfileResponse> profileOf(@PathVariable UUID userId, HttpServletRequest request) {
         return currentSessionUser.id(request)
                 .flatMap(userRepository::findById)
                 .map(viewer -> profileOf(viewer, userId))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
-    /** 본인이 아니고 RESIDENT 도 아니면 403. 없으면 404. */
-    private ResponseEntity<ProfileResponse> profileOf(UserEntity viewer, long userId) {
-        if (!viewer.getId().equals(userId) && !isResident(viewer)) {
+    /** 본인이 아니면 403. 없으면 404. */
+    private ResponseEntity<ProfileResponse> profileOf(UserEntity viewer, UUID userId) {
+        if (!viewer.getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return userRepository.findById(userId)
                 .map(user -> ResponseEntity.ok(toResponse(user)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    /** RESIDENT 역할이 있으면 true. */
-    private static boolean isResident(UserEntity user) {
-        return user.getRoles() != null && user.getRoles().contains(Role.RESIDENT);
     }
 
     /** 닉네임과 입주 자리표시자로 응답을 만든다. */

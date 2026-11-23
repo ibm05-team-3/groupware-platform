@@ -6,6 +6,7 @@ import com.goodlifecoder.groupware.security.mail.PasswordResetMailDispatcher;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,7 +53,7 @@ public class PasswordResetService {
         if (account.isEmpty()) {
             return;
         }
-        long userId = account.get().getId();
+        UUID userId = account.get().getId();
         String token = passwordResetTokenDAO.issue(userId);
         try {
             passwordResetMailDispatcher.send(userId, normalized, mailProperties.resetUrl(token));
@@ -68,13 +69,13 @@ public class PasswordResetService {
         if (token == null || token.isBlank() || password == null || password.isBlank()) {
             throw new InvalidPasswordResetException();
         }
-        Long userId = passwordResetTokenDAO.consume(token).orElseThrow(InvalidPasswordResetTokenException::new);
+        UUID userId = passwordResetTokenDAO.consume(token).orElseThrow(InvalidPasswordResetTokenException::new);
         UserEntity account = userRepository.findById(userId)
                 .filter(user -> user.getEmail() != null)
                 .orElseThrow(InvalidPasswordResetTokenException::new);
         account.changePassword(passwordEncoder.encode(password));
         userRepository.save(account);
-        authService.revokeUser(Long.toString(userId), null);
+        authService.revokeUser(userId.toString(), null);
     }
 
     /** @ 와 도메인 점이 있는지만 본다. */
