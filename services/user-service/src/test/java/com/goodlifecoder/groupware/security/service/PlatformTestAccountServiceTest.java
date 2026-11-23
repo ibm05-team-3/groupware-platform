@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-class AdminTestAccountServiceTest {
+class PlatformTestAccountServiceTest {
 
     private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000007");
 
@@ -29,8 +29,8 @@ class AdminTestAccountServiceTest {
     private final SignupEmailCodeStore codes = mock(SignupEmailCodeStore.class);
     private final UnverifiedSignupCleanup cleanup = mock(UnverifiedSignupCleanup.class);
     private final ConfirmedAccountWriter writer = mock(ConfirmedAccountWriter.class);
-    private final AdminTestAccountService service =
-            new AdminTestAccountService(users, encoder, pending, codes, cleanup, writer);
+    private final PlatformTestAccountService service =
+            new PlatformTestAccountService(users, encoder, pending, codes, cleanup, writer);
 
     @Test
     void createsAnActiveAccountWithoutMail() {

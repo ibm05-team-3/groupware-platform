@@ -1,6 +1,6 @@
 package com.goodlifecoder.groupware.security.service;
 
-import com.goodlifecoder.groupware.security.dto.AdminMemberResponse;
+import com.goodlifecoder.groupware.security.dto.PlatformMemberResponse;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.SocialAccountRepository;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AdminMemberServiceTest {
+class PlatformMemberServiceTest {
 
     private static final UUID ACTIVE = UUID.fromString("00000000-0000-0000-0000-000000000001");
     private static final UUID WITHDRAWN = UUID.fromString("00000000-0000-0000-0000-000000000002");
@@ -20,7 +20,7 @@ class AdminMemberServiceTest {
 
     private final UserRepository users = mock(UserRepository.class);
     private final SocialAccountRepository social = mock(SocialAccountRepository.class);
-    private final AdminMemberService service = new AdminMemberService(users, social);
+    private final PlatformMemberService service = new PlatformMemberService(users, social);
 
     @Test
     void unverifiedSignupsAreNotListedAndWithdrawnUsersStay() {
@@ -32,9 +32,9 @@ class AdminMemberServiceTest {
         when(users.findAllByOrderByCreatedAtDescIdDesc()).thenReturn(List.of(unverified, withdrawn, active));
         when(social.findUserIdsAndProviders()).thenReturn(List.of());
 
-        List<AdminMemberResponse> members = service.list();
+        List<PlatformMemberResponse> members = service.list();
 
-        assertThat(members).extracting(AdminMemberResponse::id).containsExactly(WITHDRAWN, ACTIVE);
+        assertThat(members).extracting(PlatformMemberResponse::id).containsExactly(WITHDRAWN, ACTIVE);
         assertThat(members.get(0).enabled()).isFalse();
         assertThat(members.get(1).email()).isEqualTo("active@test.com");
     }
