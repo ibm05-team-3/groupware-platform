@@ -105,21 +105,13 @@ function SignupConfirmPage() {
   if (!signupToken && !done) return null
 
   return (
-    <main className="grid min-h-dvh bg-background text-text lg:grid-cols-2">
-      <header className="bg-main px-4 py-8 text-background sm:px-8 sm:py-12 md:px-12 lg:flex lg:flex-col lg:justify-end lg:px-16 lg:py-20">
-        <Link to="/" className="block max-w-md text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
-          <p className="text-xs font-semibold text-accent sm:text-sm">룸링크</p>
-          <p className="mt-0.5 text-xs text-background/80">Roomlink</p>
-          <h1 className="mt-3 text-2xl font-semibold sm:text-3xl md:text-4xl lg:text-5xl">함께 사는 집</h1>
-          <p className="mt-2 text-sm text-background/85 sm:text-base md:mt-4">
-            {done ? '계정이 만들어졌습니다.' : '비밀번호를 정하거나 소셜 계정으로 가입하세요.'}
-          </p>
+    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
+      <div className="grid w-full max-w-md gap-6">
+        <Link to="/" className="text-center text-2xl font-semibold text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+          GROUPWARE
         </Link>
-      </header>
-
-      <section className="flex min-w-0 items-center px-4 py-8 sm:px-8 sm:py-12 md:px-12 lg:px-16">
         {done ? (
-          <div className="grid w-full min-w-0 max-w-md gap-4 sm:gap-5">
+          <div className="grid w-full gap-4 sm:gap-5">
             <h2 className="text-xl font-semibold text-main sm:text-2xl">가입이 완료되었습니다</h2>
             <p className="text-sm text-text sm:text-base">이제 로그인할 수 있습니다.</p>
             <Link
@@ -130,7 +122,7 @@ function SignupConfirmPage() {
             </Link>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="grid w-full min-w-0 max-w-md gap-4 sm:gap-5">
+          <form onSubmit={handleSubmit} className="grid w-full gap-4 sm:gap-5">
             <h2 className="text-xl font-semibold text-main sm:text-2xl">비밀번호 설정</h2>
             <label htmlFor="password" className="grid gap-1.5 text-sm font-medium text-text sm:text-base">
               비밀번호
@@ -192,7 +184,7 @@ function SignupConfirmPage() {
             )}
           </form>
         )}
-      </section>
+      </div>
     </main>
   )
 }

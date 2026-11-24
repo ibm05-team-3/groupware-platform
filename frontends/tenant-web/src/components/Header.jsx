@@ -3,7 +3,7 @@
  * 작성일: 2026-10-27
  */
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router'
 import { logout, useSession } from '../session'
 
@@ -17,15 +17,6 @@ function linkClass(isActive) {
   return `rounded-lg px-2 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-3 ${
     isActive ? 'bg-main text-background' : 'text-text hover:bg-main/10'
   }`
-}
-
-/** 헤더 링크를 그린다. */
-function MenuLink({ to, label }) {
-  return (
-    <NavLink to={to} className={({ isActive }) => linkClass(isActive)}>
-      {label}
-    </NavLink>
-  )
 }
 
 /** 로그인 회원의 프로필 메뉴. 닉네임이 없으면 MY 로 보여주고, 로그아웃하면 로그인 화면으로 보낸다. */
@@ -90,13 +81,19 @@ function MyMenu({ nickname }) {
               {item.label}
             </NavLink>
           ))}
+          <NavLink
+            to="/tenants"
+            className="rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap text-text no-underline hover:bg-main/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            테넌트 선택하기
+          </NavLink>
           <button
             type="button"
             disabled={loggingOut}
             onClick={() => {
               setLoggingOut(true)
               logout()
-                .then(() => navigate('/login', { replace: true }))
+                .then(() => navigate('/', { replace: true }))
                 .catch(() => setLoggingOut(false))
             }}
             className="rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap text-text hover:bg-main/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
@@ -129,62 +126,22 @@ function AuthButtons() {
   )
 }
 
-/** 상단 메뉴. 찾기 메뉴와 오른쪽 버튼이 겹치면 버튼을 다음 줄로 내리고, 세션이 확정되기 전에는 로그인 버튼을 그리지 않는다. */
+/** 상단 메뉴. 세션이 확정되기 전에는 로그인 버튼을 그리지 않는다. */
 function Header() {
   const session = useSession()
-  const headerRef = useRef(null)
-  const findRef = useRef(null)
-  const utilityRef = useRef(null)
-  const [wrapUtilities, setWrapUtilities] = useState(false)
-
-  useLayoutEffect(() => {
-    const header = headerRef.current
-    const find = findRef.current
-    const utilities = utilityRef.current
-    if (!header || !find || !utilities) return undefined
-
-    function update() {
-      const grid = header.firstElementChild
-      const gridBox = grid.getBoundingClientRect()
-      const findBox = find.getBoundingClientRect()
-      const paddingRight = Number.parseFloat(getComputedStyle(grid).paddingRight) || 0
-      const contentRight = gridBox.right - paddingRight
-      const utilitiesStart = contentRight - utilities.offsetWidth
-      setWrapUtilities(findBox.right + 12 > utilitiesStart)
-    }
-
-    update()
-    const observer = new ResizeObserver(update)
-    observer.observe(header)
-    observer.observe(find)
-    observer.observe(utilities)
-    return () => observer.disconnect()
-  }, [session.status, session.authenticated])
 
   return (
-    <header ref={headerRef} className="border-b border-main/15">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-3 px-4 py-3 sm:px-8 md:px-12">
+    <header className="border-b border-main/15">
+      <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-8 md:px-12">
         <NavLink
           to="/"
           end
-          className="justify-self-start focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
-          <span className="text-lg font-semibold text-main">룸링크</span>
+          <span className="text-lg font-semibold text-main">GROUPWARE</span>
         </NavLink>
-        <nav aria-label="메뉴" className="contents">
-          <div ref={findRef} className="relative">
-            <MenuLink to="/property/buildings" label="코리빙 찾기" />
-          </div>
-          <div
-            ref={utilityRef}
-            className={
-              wrapUtilities
-                ? 'col-span-3 mt-2 flex w-max items-center justify-end gap-1 justify-self-end'
-                : 'col-start-3 row-start-1 flex w-max items-center justify-end gap-1 justify-self-end'
-            }
-          >
-            {session.status === 'ready' && (session.authenticated ? <MyMenu nickname={session.nickname} /> : <AuthButtons />)}
-          </div>
+        <nav aria-label="메뉴" className="flex items-center gap-1">
+          {session.status === 'ready' && (session.authenticated ? <MyMenu nickname={session.nickname} /> : <AuthButtons />)}
         </nav>
       </div>
     </header>

@@ -94,18 +94,12 @@ function SignupPage() {
   }
 
   return (
-    <main className="grid min-h-dvh bg-background text-text lg:grid-cols-2">
-      <header className="bg-main px-4 py-8 text-background sm:px-8 sm:py-12 md:px-12 lg:flex lg:flex-col lg:justify-end lg:px-16 lg:py-20">
-        <Link to="/" className="block max-w-md text-inherit no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
-          <p className="text-xs font-semibold text-accent sm:text-sm">룸링크</p>
-          <p className="mt-0.5 text-xs text-background/80">Roomlink</p>
-          <h1 className="mt-3 text-2xl font-semibold sm:text-3xl md:text-4xl lg:text-5xl">함께 사는 집</h1>
-          <p className="mt-2 text-sm text-background/85 sm:text-base md:mt-4">이메일로 룸링크 계정을 만드세요.</p>
+    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
+      <div className="grid w-full max-w-md gap-6">
+        <Link to="/" className="text-center text-2xl font-semibold text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+          GROUPWARE
         </Link>
-      </header>
-
-      <section className="flex min-w-0 items-center px-4 py-8 sm:px-8 sm:py-12 md:px-12 lg:px-16">
-        <form onSubmit={handleSubmit} className="grid w-full min-w-0 max-w-md gap-4 sm:gap-5">
+        <form onSubmit={handleSubmit} className="grid w-full gap-4 sm:gap-5">
           <h2 className="text-xl font-semibold text-main sm:text-2xl">회원가입</h2>
           <p className="text-sm text-text/70 sm:text-base">이메일로 확인 코드를 보냅니다. 코드를 확인한 뒤에 비밀번호를 정하거나 소셜 계정으로 가입합니다.</p>
           <TextField
@@ -138,7 +132,7 @@ function SignupPage() {
             <p className="min-w-0 rounded-lg border border-main/20 bg-white p-3 text-sm">{result}</p>
           )}
         </form>
-      </section>
+      </div>
     </main>
   )
 }
