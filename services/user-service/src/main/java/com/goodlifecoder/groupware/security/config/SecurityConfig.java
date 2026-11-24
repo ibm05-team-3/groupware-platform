@@ -21,8 +21,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestCustomizers;
@@ -66,12 +64,6 @@ public class SecurityConfig {
     private final SessionCookieFactory sessionCookieFactory;
     private final CurrentSessionUser currentSessionUser;
     private final RedisOAuth2AuthorizationRequestRepository authorizationRequestRepository;
-
-    /** 이메일 비밀번호 해시. DelegatingPasswordEncoder 를 쓴다. */
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
 
     /** 이메일 로그인 필터가 쓸 인증 매니저. */
     @Bean
