@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: attendance-service
+  config:
+    import: "optional:configserver:http://localhost:8888/"
+  cloud:
+    config:
+      fail-fast: true
+  profiles:
+    active: dev
+  # datasource, jpa는 그대로
+# eureka.client.enabled: false 블록은 삭제 (Eureka 주소는 config의 application-dev.yaml에서 받아옴)
+server:
+  port: 8083

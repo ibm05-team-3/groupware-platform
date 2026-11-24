@@ -83,8 +83,8 @@ app:
     session-cookie-name: session
     oauth-transaction-name: oauth_tx
     oauth-transaction-max-age: 10m
-
 auth:
+
   access-token-key-id: es256-2026
   access-token-issuer: user-service
   access-token-refresh-skew: 15s
