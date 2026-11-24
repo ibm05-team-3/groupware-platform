@@ -40,19 +40,31 @@ public class AuthService {
 
     private final UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
 
-    /** 회원 소셜 로그인 세션. 본사 역할이 있어도 본사 토큰을 발급하지 않는다. */
+    /** 회원 로그인 세션. 본사 역할이 있어도 account 토큰만 발급한다. */
     public String openSession(String accessSub) {
+        return openSession(accessSub, null);
+    }
+
+    /** 이 브라우저의 이전 세션을 끊고 account 토큰만 발급한다. */
+    public String openSession(String accessSub, String previousSessionId) {
         findAndValidateUser(accessSub);
+        discardPrevious(previousSessionId);
         return browserSessionDAO.saveNew(issue(accessSub, AccessTokenClaims.account(), null));
     }
 
-    /** 본사 이메일 로그인. 본사 역할이 없으면 세션을 열지 않는다. */
+    /** 본사 로그인. 본사 역할이 없으면 세션을 열지 않는다. */
     public Optional<String> openPlatformSession(String accessSub) {
+        return openPlatformSession(accessSub, null);
+    }
+
+    /** 본사 역할이 있을 때만 이전 세션을 끊고 platform 토큰을 발급한다. */
+    public Optional<String> openPlatformSession(String accessSub, String previousSessionId) {
         UserDetails userDetails = findAndValidateUser(accessSub);
         AccessTokenClaims claims = claimsOf(userDetails);
         if (claims.context() != TokenContext.PLATFORM) {
             return Optional.empty();
         }
+        discardPrevious(previousSessionId);
         return Optional.of(browserSessionDAO.saveNew(issue(accessSub, claims, LoginEntrance.PLATFORM)));
     }
 
@@ -74,6 +86,25 @@ public class AuthService {
         }
         refreshTokenDAO.deleteTokenHash(session.refreshToken());
         browserSessionDAO.save(sessionId, issue(session.sub(), claims.get(), LoginEntrance.TENANT));
+        return Optional.of(true);
+    }
+
+    /**
+     * 회사 선택을 해제한다. 회사 권한을 버리고 account 토큰으로 바꾼다.
+     * 세션이 없으면 empty, 회사 안이 아니면 false, 바꾸면 true.
+     */
+    public Optional<Boolean> leaveTenant(String sessionId) {
+        Optional<BrowserSession> stored = browserSessionDAO.find(sessionId);
+        if (stored.isEmpty()) {
+            return Optional.empty();
+        }
+        BrowserSession session = stored.get();
+        if (session.entrance() != LoginEntrance.TENANT) {
+            return Optional.of(false);
+        }
+        findAndValidateUser(session.sub());
+        refreshTokenDAO.deleteTokenHash(session.refreshToken());
+        browserSessionDAO.save(sessionId, issue(session.sub(), AccessTokenClaims.account(), null));
         return Optional.of(true);
     }
 
@@ -121,6 +152,13 @@ public class AuthService {
         }
         browserSessionDAO.save(sessionId, renewed.get());
         return Optional.of(renewed.get().accessToken());
+    }
+
+    /** 로그인으로 바뀌는 이 브라우저의 이전 세션만 끊는다. */
+    private void discardPrevious(String sessionId) {
+        if (sessionId != null && !sessionId.isBlank()) {
+            closeSession(sessionId);
+        }
     }
 
     /** 이 세션과 그 리프레시 토큰만 지운다. */

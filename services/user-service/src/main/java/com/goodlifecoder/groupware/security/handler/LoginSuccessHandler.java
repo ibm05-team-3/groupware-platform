@@ -38,9 +38,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             throws IOException, ServletException {
         // authentication.getName() => CustomUserDetails 의 getName 과 동일한 값
         String sub = authentication.getName();
+        String previous = sessionCookieFactory.read(request).orElse(null);
         String sessionId = entrance == LoginEntrance.PLATFORM
-                ? authService.openPlatformSession(sub).orElse(null)
-                : authService.openSession(sub);
+                ? authService.openPlatformSession(sub, previous).orElse(null)
+                : authService.openSession(sub, previous);
         if (sessionId == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;

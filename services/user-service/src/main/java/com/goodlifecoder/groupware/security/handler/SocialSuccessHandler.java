@@ -36,9 +36,10 @@ public class SocialSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         // authentication.getName() => CustomOAuth2User 의 getName 과 동일한 값
         String sub = authentication.getName();
+        String previous = sessionCookieFactory.read(request).orElse(null);
         String sessionId = LoginEntranceOAuth.platform(request)
-                ? authService.openPlatformSession(sub).orElse(null)
-                : authService.openSession(sub);
+                ? authService.openPlatformSession(sub, previous).orElse(null)
+                : authService.openSession(sub, previous);
         if (sessionId == null) {
             response.sendRedirect(appProperties.frontend().url());
             return;

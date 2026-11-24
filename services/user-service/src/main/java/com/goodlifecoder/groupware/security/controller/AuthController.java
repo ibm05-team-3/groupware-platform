@@ -104,6 +104,26 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * 회사 선택을 해제하고 account 토큰으로 바꾼다.
+     * 쿠키가 없거나 세션이 없으면 401, 회사 안이 아니면 403.
+     */
+    @PostMapping("/user/tenant-exit")
+    public ResponseEntity<Void> leaveTenant(HttpServletRequest httpRequest) {
+        Optional<String> sessionId = sessionCookieFactory.read(httpRequest);
+        if (sessionId.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Optional<Boolean> left = authService.leaveTenant(sessionId.get());
+        if (left.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (!left.get()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.noContent().build();
+    }
+
     /** 현재 세션만 지우고 세션 쿠키를 만료시킨다. 다른 기기의 세션은 남긴다. */
     @PostMapping("/user/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {

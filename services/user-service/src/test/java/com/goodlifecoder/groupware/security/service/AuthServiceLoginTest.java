@@ -79,6 +79,53 @@ class AuthServiceLoginTest {
     }
 
     @Test
+    void memberLoginDiscardsThePreviousBrowserSession() {
+        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(sessions.find("old")).thenReturn(Optional.of(expired(LoginEntrance.TENANT, TENANT_ID)));
+
+        assertThat(authService.openSession(SUB, "old")).isEqualTo("sid");
+
+        verify(refreshTokens).deleteTokenHash("old-refresh");
+        verify(sessions).delete("old");
+        assertThat(issuedClaims().context()).isEqualTo(TokenContext.ACCOUNT);
+        assertThat(issuedClaims().permissions()).isEmpty();
+    }
+
+    @Test
+    void platformLoginDiscardsThePreviousSessionOnlyWhenAHeadquartersRoleExists() {
+        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of(), List.of()));
+
+        assertThat(authService.openPlatformSession(SUB, "old")).isEmpty();
+
+        verify(sessions, never()).delete(any());
+    }
+
+    @Test
+    void leaveTenantReplacesTheSessionWithAnAccountToken() {
+        when(sessions.find("sid")).thenReturn(Optional.of(expired(LoginEntrance.TENANT, TENANT_ID)));
+        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+
+        assertThat(authService.leaveTenant("sid")).contains(true);
+
+        verify(refreshTokens).deleteTokenHash("old-refresh");
+        BrowserSession saved = replacedSession();
+        assertThat(saved.entrance()).isNull();
+        assertThat(saved.tenantId()).isNull();
+        assertThat(issuedClaims().context()).isEqualTo(TokenContext.ACCOUNT);
+        assertThat(issuedClaims().permissions()).isEmpty();
+    }
+
+    @Test
+    void leaveTenantOutsideACompanyDoesNotChangeTheSession() {
+        when(sessions.find("sid")).thenReturn(Optional.of(expired(LoginEntrance.PLATFORM, null)));
+
+        assertThat(authService.leaveTenant("sid")).contains(false);
+
+        verify(sessions, never()).save(eq("sid"), any());
+        verify(tokens, never()).issueAccessToken(any(), any());
+    }
+
+    @Test
     void memberLoginIssuesAnEmptyToken() {
         when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
 
