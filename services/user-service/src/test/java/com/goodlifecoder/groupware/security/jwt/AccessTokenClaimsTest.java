@@ -21,19 +21,19 @@ class AccessTokenClaimsTest {
                 assignment(userId, "ops", "user:read", "hr:*"),
                 assignment(userId, "audit", "hr:*", "payroll:read")));
 
-        assertThat(claims.roles()).containsExactly("audit", "ops");
+        assertThat(claims.context()).isEqualTo(TokenContext.PLATFORM);
         assertThat(claims.permissions()).containsExactly("hr:*", "payroll:read", "user:read");
         assertThat(claims.tenantId()).isNull();
     }
 
     @Test
-    void tenantClaimsKeepThatTenantOnlyAndMarkRoot() {
+    void tenantClaimsKeepThatTenantsPermissionsOnly() {
         UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000002");
         UUID tenantId = UUID.fromString("00000000-0000-0000-0000-000000000010");
-        AccessTokenClaims claims = AccessTokenClaims.tenant(tenantId, true, List.of(
+        AccessTokenClaims claims = AccessTokenClaims.tenant(tenantId, List.of(
                 tenantAssignment(userId, tenantId, "payroll_reader", "payroll:read")));
 
-        assertThat(claims.roles()).containsExactly("payroll_reader", "root");
+        assertThat(claims.context()).isEqualTo(TokenContext.TENANT);
         assertThat(claims.permissions()).containsExactly("payroll:read");
         assertThat(claims.tenantId()).isEqualTo(tenantId);
     }
@@ -42,7 +42,7 @@ class AccessTokenClaimsTest {
     void platformClaimsAreEmptyWhenTheUserHasNoHeadquartersRole() {
         AccessTokenClaims claims = AccessTokenClaims.platform(List.of());
 
-        assertThat(claims.roles()).isEmpty();
+        assertThat(claims.context()).isEqualTo(TokenContext.ACCOUNT);
         assertThat(claims.permissions()).isEmpty();
         assertThat(claims.tenantId()).isNull();
     }

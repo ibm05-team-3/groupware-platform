@@ -12,6 +12,7 @@ import com.goodlifecoder.groupware.iam.entity.UserTenantRoleEntity;
 import com.goodlifecoder.groupware.iam.entity.UserTenantRoleId;
 import com.goodlifecoder.groupware.iam.repository.UserTenantRoleRepository;
 import com.goodlifecoder.groupware.security.jwt.AccessTokenClaims;
+import com.goodlifecoder.groupware.security.jwt.TokenContext;
 import com.goodlifecoder.groupware.tenant.entity.MembershipStatus;
 import com.goodlifecoder.groupware.tenant.entity.TenantEntity;
 import com.goodlifecoder.groupware.tenant.entity.TenantStatus;
@@ -89,7 +90,7 @@ class LoginTokenServiceTest {
 
         assertThat(claims).isPresent();
         assertThat(claims.get().tenantId()).isEqualTo(TENANT_ID);
-        assertThat(claims.get().roles()).containsExactly("payroll_reader", "root");
+        assertThat(claims.get().context()).isEqualTo(TokenContext.TENANT);
         assertThat(claims.get().permissions()).containsExactly("payroll:read");
     }
 

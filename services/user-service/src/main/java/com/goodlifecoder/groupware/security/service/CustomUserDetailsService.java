@@ -54,9 +54,9 @@ public class CustomUserDetailsService  implements UserDetailsService {
         return userDetails(user);
     }
 
-    /** 본사 역할 코드와 권한을 싣는다. 테넌트 역할은 들어가지 않는다. */
+    /** 본사 권한이 있으면 platform 클레임을 싣는다. 테넌트 역할은 들어가지 않는다. */
     private CustomUserDetails userDetails(UserEntity user) {
         AccessTokenClaims claims = AccessTokenClaims.platform(platformRoles.findAllWithRoleByUserId(user.getId()));
-        return new CustomUserDetails(user, user.getPassword(), claims.roles(), claims.permissions());
+        return new CustomUserDetails(user, user.getPassword(), claims);
     }
 }

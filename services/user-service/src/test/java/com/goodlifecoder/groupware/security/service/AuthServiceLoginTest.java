@@ -14,6 +14,7 @@ import com.goodlifecoder.groupware.security.dao.RefreshTokenDAO;
 import com.goodlifecoder.groupware.security.entity.CustomUserDetails;
 import com.goodlifecoder.groupware.security.jwt.AccessTokenClaims;
 import com.goodlifecoder.groupware.security.jwt.AccessTokenProvider;
+import com.goodlifecoder.groupware.security.jwt.TokenContext;
 import com.goodlifecoder.groupware.security.session.BrowserSession;
 import com.goodlifecoder.groupware.security.session.LoginEntrance;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
@@ -62,7 +63,7 @@ class AuthServiceLoginTest {
         assertThat(saved.entrance()).isEqualTo(LoginEntrance.PLATFORM);
         assertThat(saved.tenantId()).isNull();
         assertThat(issuedClaims().tenantId()).isNull();
-        assertThat(issuedClaims().roles()).containsExactly("ops");
+        assertThat(issuedClaims().context()).isEqualTo(TokenContext.PLATFORM);
         assertThat(issuedClaims().permissions()).containsExactly("user:read");
         verify(loginTokens, never()).tenantClaims(any(), any(String.class));
     }
@@ -86,7 +87,7 @@ class AuthServiceLoginTest {
         BrowserSession saved = savedSession();
         assertThat(saved.entrance()).isNull();
         assertThat(saved.tenantId()).isNull();
-        assertThat(issuedClaims().roles()).isEmpty();
+        assertThat(issuedClaims().context()).isEqualTo(TokenContext.ACCOUNT);
         assertThat(issuedClaims().permissions()).isEmpty();
         assertThat(issuedClaims().tenantId()).isNull();
     }
@@ -171,7 +172,7 @@ class AuthServiceLoginTest {
         BrowserSession saved = savedSession();
         assertThat(saved.entrance()).isNull();
         assertThat(saved.tenantId()).isNull();
-        assertThat(issuedClaims().roles()).isEmpty();
+        assertThat(issuedClaims().context()).isEqualTo(TokenContext.ACCOUNT);
         assertThat(issuedClaims().permissions()).isEmpty();
         assertThat(issuedClaims().tenantId()).isNull();
         verify(loginTokens, never()).tenantClaims(any(), any(String.class));
@@ -188,7 +189,7 @@ class AuthServiceLoginTest {
         BrowserSession saved = replacedSession();
         assertThat(saved.entrance()).isEqualTo(LoginEntrance.PLATFORM);
         assertThat(saved.tenantId()).isNull();
-        assertThat(issuedClaims().roles()).containsExactly("ops");
+        assertThat(issuedClaims().context()).isEqualTo(TokenContext.PLATFORM);
         assertThat(issuedClaims().permissions()).containsExactly("user:read");
     }
 
@@ -243,7 +244,7 @@ class AuthServiceLoginTest {
         BrowserSession saved = replacedSession();
         assertThat(saved.entrance()).isNull();
         assertThat(saved.tenantId()).isNull();
-        assertThat(issuedClaims().roles()).isEmpty();
+        assertThat(issuedClaims().context()).isEqualTo(TokenContext.ACCOUNT);
         assertThat(issuedClaims().permissions()).isEmpty();
     }
 
@@ -271,11 +272,15 @@ class AuthServiceLoginTest {
                 .enabled(true)
                 .accountNonLocked(true)
                 .build();
-        return new CustomUserDetails(user, "{noop}secret", roles, permissions);
+        return new CustomUserDetails(user, "{noop}secret", platformClaims(roles, permissions));
+    }
+
+    private static AccessTokenClaims platformClaims(List<String> roles, List<String> permissions) {
+        return new AccessTokenClaims(roles.isEmpty() ? TokenContext.ACCOUNT : TokenContext.PLATFORM, permissions, null);
     }
 
     private static AccessTokenClaims tenantClaims() {
-        return new AccessTokenClaims(List.of("payroll_reader"), List.of("payroll:read"), TENANT_ID);
+        return new AccessTokenClaims(TokenContext.TENANT, List.of("payroll:read"), TENANT_ID);
     }
 
     private static BrowserSession expired(LoginEntrance entrance, UUID tenantId) {

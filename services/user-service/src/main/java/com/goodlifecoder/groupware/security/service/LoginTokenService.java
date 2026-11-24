@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * 테넌트 로그인 토큰에 넣을 그 테넌트의 역할과 권한.
+ * 테넌트 로그인 토큰에 넣을 그 테넌트의 권한.
  * 본사 권한은 복사하지 않는다.
  */
 @Service
@@ -49,7 +49,6 @@ public class LoginTokenService {
         }
         return Optional.of(AccessTokenClaims.tenant(
                 tenantId,
-                membership.get().isRoot(),
                 tenantRoles.findAllWithRoleByUserIdAndTenantId(userId, tenantId)));
     }
 }

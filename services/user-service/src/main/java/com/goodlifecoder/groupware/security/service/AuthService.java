@@ -2,6 +2,7 @@ package com.goodlifecoder.groupware.security.service;
 
 import com.goodlifecoder.groupware.security.config.AuthProperties;
 import com.goodlifecoder.groupware.security.jwt.AccessTokenClaims;
+import com.goodlifecoder.groupware.security.jwt.TokenContext;
 import com.goodlifecoder.groupware.security.dao.BrowserSessionDAO;
 import com.goodlifecoder.groupware.security.dao.RefreshTokenDAO;
 import com.goodlifecoder.groupware.security.entity.CustomUserDetails;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -43,14 +43,14 @@ public class AuthService {
     /** 회원 소셜 로그인 세션. 본사 역할이 있어도 본사 토큰을 발급하지 않는다. */
     public String openSession(String accessSub) {
         findAndValidateUser(accessSub);
-        return browserSessionDAO.saveNew(issue(accessSub, new AccessTokenClaims(List.of(), List.of(), null), null));
+        return browserSessionDAO.saveNew(issue(accessSub, AccessTokenClaims.account(), null));
     }
 
     /** 본사 이메일 로그인. 본사 역할이 없으면 세션을 열지 않는다. */
     public Optional<String> openPlatformSession(String accessSub) {
         UserDetails userDetails = findAndValidateUser(accessSub);
         AccessTokenClaims claims = claimsOf(userDetails);
-        if (claims.roles().isEmpty()) {
+        if (claims.context() != TokenContext.PLATFORM) {
             return Optional.empty();
         }
         return Optional.of(browserSessionDAO.saveNew(issue(accessSub, claims, LoginEntrance.PLATFORM)));
@@ -152,11 +152,11 @@ public class AuthService {
         }
         if (session.entrance() != LoginEntrance.PLATFORM) {
             findAndValidateUser(accessSub);
-            return Optional.of(issue(accessSub, new AccessTokenClaims(List.of(), List.of(), null), null));
+            return Optional.of(issue(accessSub, AccessTokenClaims.account(), null));
         }
         UserDetails userDetails = findAndValidateUser(accessSub);
         AccessTokenClaims claims = claimsOf(userDetails);
-        if (claims.roles().isEmpty()) {
+        if (claims.context() != TokenContext.PLATFORM) {
             return Optional.empty();
         }
         return Optional.of(issue(accessSub, claims, LoginEntrance.PLATFORM));
@@ -186,7 +186,7 @@ public class AuthService {
         if (userDetails instanceof CustomUserDetails details) {
             return details.accessTokenClaims();
         }
-        return new AccessTokenClaims(List.of(), List.of(), null);
+        return AccessTokenClaims.account();
     }
 
     /** 회원 번호로 계정을 읽고 잠금·비활성 여부를 확인한다. */

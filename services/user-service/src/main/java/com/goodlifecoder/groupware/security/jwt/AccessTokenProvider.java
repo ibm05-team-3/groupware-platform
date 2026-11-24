@@ -23,8 +23,8 @@ import java.util.*;
 
 /**
  * ES256 액세스 토큰 발급. subject 는 회원 번호 문자열이다.
- * roles 에는 역할 코드, permissions 에는 서비스:API 를 싣는다.
- * 테넌트 소속 토큰만 tenant_id 를 가진다. 본사 토큰에는 넣지 않는다.
+ * context 는 account, platform, tenant 중 하나다. permissions 에는 서비스:API 를 싣는다.
+ * 테넌트 소속 토큰만 tenant_id 를 가진다. 역할 코드는 넣지 않는다.
  *
  * @author 조휘재
  * 작성일: 2026-11-23
@@ -37,12 +37,10 @@ public class AccessTokenProvider {
     private JwtEncoder jwtEncoder;
     private JwsHeader header;
 
-    /** 역할과 권한을 클레임으로 넣어 서명한다. 본사 토큰에는 tenant_id 를 넣지 않는다. */
+    /** context 와 권한을 클레임으로 넣어 서명한다. 회사 안 토큰만 tenant_id 를 넣는다. */
     public String issueAccessToken(String sub, AccessTokenClaims accessClaims) {
         Instant now = Instant.now();
-        AccessTokenClaims claims = accessClaims == null
-                ? new AccessTokenClaims(List.of(), List.of(), null)
-                : accessClaims;
+        AccessTokenClaims claims = accessClaims == null ? AccessTokenClaims.account() : accessClaims;
 
         JwtClaimsSet.Builder builder = JwtClaimsSet.builder()
                 .subject(sub)
@@ -50,7 +48,7 @@ public class AccessTokenProvider {
                 .expiresAt(now.plus(authProperties.accessTokenExpiration()))
                 .id(UUID.randomUUID().toString())
                 .issuer(authProperties.accessTokenIssuer())
-                .claim("roles", claims.roles())
+                .claim("context", claims.context().claim())
                 .claim("permissions", claims.permissions());
         if (claims.tenantId() != null) {
             builder.claim("tenant_id", claims.tenantId().toString());

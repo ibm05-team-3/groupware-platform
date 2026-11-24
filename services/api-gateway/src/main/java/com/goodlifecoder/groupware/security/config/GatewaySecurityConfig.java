@@ -215,25 +215,11 @@ public class GatewaySecurityConfig {
         return converter;
     }
 
-    /**
-     * tenant_id 가 없고 permissions 가 있으면 본사 토큰이므로 SCOPE_PLATFORM 을 붙인다.
-     * roles 는 권한으로 바꾸지 않는다.
-     */
+    /** context 가 platform 이면 본사 토큰이므로 SCOPE_PLATFORM 을 붙인다. */
     private Flux<GrantedAuthority> authorities(Jwt jwt) {
-        if (jwt.getClaim("tenant_id") == null && !stringList(jwt, "permissions").isEmpty()) {
+        if ("platform".equals(jwt.getClaimAsString("context"))) {
             return Flux.just(new SimpleGrantedAuthority("SCOPE_PLATFORM"));
         }
         return Flux.empty();
-    }
-
-    private static List<String> stringList(Jwt jwt, String claim) {
-        Object value = jwt.getClaim(claim);
-        if (value instanceof List<?> values) {
-            return values.stream().map(String::valueOf).toList();
-        }
-        if (value instanceof String text && !text.isBlank()) {
-            return List.of(text);
-        }
-        return List.of();
     }
 }

@@ -26,11 +26,12 @@ class AccessTokenProviderTest {
 
         String token = provider.issueAccessToken(
                 userId.toString(),
-                new AccessTokenClaims(List.of("ops"), List.of("hr:*", "user:read"), null));
+                new AccessTokenClaims(TokenContext.PLATFORM, List.of("hr:*", "user:read"), null));
 
         JWTClaimsSet claims = claims(token, pair);
         assertThat(claims.getSubject()).isEqualTo(userId.toString());
-        assertThat(claims.getStringListClaim("roles")).containsExactly("ops");
+        assertThat(claims.getStringClaim("context")).isEqualTo("platform");
+        assertThat(claims.getClaim("roles")).isNull();
         assertThat(claims.getStringListClaim("permissions")).containsExactly("hr:*", "user:read");
         assertThat(claims.getClaim("tenant_id")).isNull();
         assertThat(claims.getClaim("scope")).isNull();
@@ -44,11 +45,12 @@ class AccessTokenProviderTest {
 
         String token = provider.issueAccessToken(
                 "user",
-                new AccessTokenClaims(List.of("root", "payroll_reader"), List.of("payroll:read"), tenantId));
+                new AccessTokenClaims(TokenContext.TENANT, List.of("payroll:read"), tenantId));
 
         JWTClaimsSet claims = claims(token, pair);
+        assertThat(claims.getStringClaim("context")).isEqualTo("tenant");
         assertThat(claims.getStringClaim("tenant_id")).isEqualTo(tenantId.toString());
-        assertThat(claims.getStringListClaim("roles")).containsExactly("root", "payroll_reader");
+        assertThat(claims.getClaim("roles")).isNull();
         assertThat(claims.getStringListClaim("permissions")).containsExactly("payroll:read");
     }
 
