@@ -12,3 +12,9 @@ spring:
 # eureka.client.enabled: false 블록은 삭제 (Eureka 주소는 config의 application-dev.yaml에서 받아옴)
 server:
   port: 8083
+
+
+auth:
+  access-token-issuer: user-service
+  access-token-key-id: es256-2026
+  access-token-public: ${JWT_PUBLIC_KEY:-----BEGIN PUBLIC KEY-----MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7wOxzOM9xtHw9RvbS19kvJeoioQxiI9vA5BfCEUAkO4bzjy+ODGws6oL7Vv6Dv0YXGdwLqmIkrn6RKujHYoH7g==-----END PUBLIC KEY-----}
