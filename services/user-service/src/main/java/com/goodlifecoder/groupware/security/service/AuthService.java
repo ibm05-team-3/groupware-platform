@@ -107,13 +107,6 @@ public class AuthService {
         return Optional.of(true);
     }
 
-    /** 그 테넌트 토큰으로 새 세션을 연다. 소속이 없으면 비운다. */
-    public Optional<String> openTenantSession(String accessSub, String tenantSlug) {
-        findAndValidateUser(accessSub);
-        Optional<AccessTokenClaims> claims = loginTokens.tenantClaims(userId(accessSub), tenantSlug);
-        return claims.map(value -> browserSessionDAO.saveNew(issue(accessSub, value, LoginEntrance.TENANT)));
-    }
-
     /** 세션을 읽는다. 없으면 비운다. */
     public Optional<BrowserSession> findBrowserSession(String sessionId) {
         return browserSessionDAO.find(sessionId);

@@ -202,32 +202,6 @@ class AuthServiceLoginTest {
     }
 
     @Test
-    void tenantLoginIssuesThatTenantClaimsEvenWhenTheAccountAlsoHasHeadquartersRoles() {
-        when(userDetails.loadUserById(SUB)).thenReturn(details());
-        when(loginTokens.tenantClaims(USER_ID, "acme")).thenReturn(Optional.of(tenantClaims()));
-
-        assertThat(authService.openTenantSession(SUB, "acme")).contains("sid");
-
-        BrowserSession saved = savedSession();
-        assertThat(saved.entrance()).isEqualTo(LoginEntrance.TENANT);
-        assertThat(saved.tenantId()).isEqualTo(TENANT_ID);
-        assertThat(issuedClaims()).isEqualTo(tenantClaims());
-        verify(userDetails, never()).platformClaims(any());
-    }
-
-    @Test
-    void tenantLoginWithoutAnActiveMembershipDoesNotOpenASession() {
-        when(userDetails.loadUserById(SUB)).thenReturn(details());
-        when(loginTokens.tenantClaims(USER_ID, "missing")).thenReturn(Optional.empty());
-
-        assertThat(authService.openTenantSession(SUB, "missing")).isEmpty();
-
-        verify(sessions, never()).saveNew(any());
-        verify(tokens, never()).issueAccessToken(any(), any());
-        verify(userDetails, never()).platformClaims(any());
-    }
-
-    @Test
     void socialLoginDoesNotIssueAHeadquartersToken() {
         when(userDetails.loadUserById(SUB)).thenReturn(details());
 
