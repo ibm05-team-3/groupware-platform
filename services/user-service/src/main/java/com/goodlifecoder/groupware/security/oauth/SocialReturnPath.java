@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
  */
 public final class SocialReturnPath {
 
-    static final String ATTRIBUTE = "return_to";
+    public static final String ATTRIBUTE = "return_to";
     private static final int MAX_LENGTH = 2048;
 
     /** 유틸리티 클래스. 인스턴스를 만들지 않는다. */

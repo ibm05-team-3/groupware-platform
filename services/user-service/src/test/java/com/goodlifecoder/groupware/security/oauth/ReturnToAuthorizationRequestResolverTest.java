@@ -47,6 +47,22 @@ class ReturnToAuthorizationRequestResolverTest {
         assertSame(original, resolver.resolve(request));
     }
 
+    @Test
+    void platformResolverKeepsReturnPathAndDropsRootSignupToken() {
+        OAuth2AuthorizationRequest original = authorizationRequest();
+        ReturnToAuthorizationRequestResolver resolver =
+                new ReturnToAuthorizationRequestResolver(delegate(original), false);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter(SocialReturnPath.ATTRIBUTE, "/hq");
+        request.setParameter(RootSignupOAuth.PARAMETER, "signup-token");
+
+        OAuth2AuthorizationRequest resolved = resolver.resolve(request);
+
+        assertEquals("/hq", resolved.getAttribute(SocialReturnPath.ATTRIBUTE));
+        assertNull(resolved.getAttribute(RootSignupOAuth.PARAMETER));
+        assertEquals(AUTHORIZATION_URI, resolved.getAuthorizationRequestUri());
+    }
+
     private static OAuth2AuthorizationRequest authorizationRequest() {
         return OAuth2AuthorizationRequest.authorizationCode()
                 .authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")

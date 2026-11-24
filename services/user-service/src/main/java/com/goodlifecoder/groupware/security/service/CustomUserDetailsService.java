@@ -1,6 +1,7 @@
 package com.goodlifecoder.groupware.security.service;
 
 import com.goodlifecoder.groupware.iam.repository.UserPlatformRoleRepository;
+import com.goodlifecoder.groupware.security.jwt.AccessTokenClaims;
 import com.goodlifecoder.groupware.user.entity.UserEntity;
 import com.goodlifecoder.groupware.user.repository.UserRepository;
 import com.goodlifecoder.groupware.security.entity.CustomUserDetails;
@@ -35,7 +36,7 @@ public class CustomUserDetailsService  implements UserDetailsService {
                 .filter(found -> found.getPassword() != null)
                 .orElseThrow(() -> new UsernameNotFoundException("이메일 또는 비밀번호가 올바르지 않습니다."));
 
-        return new CustomUserDetails(user, user.getPassword(), platformRoles.existsByIdUserId(user.getId()));
+        return userDetails(user);
     }
 
     /** 회원 번호로 계정을 읽는다. 소셜 전용 계정은 비밀번호가 null 이다. */
@@ -50,6 +51,12 @@ public class CustomUserDetailsService  implements UserDetailsService {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("아이디 혹은 비밀번호가 틀렸습니다."));
 
-        return new CustomUserDetails(user, user.getPassword(), platformRoles.existsByIdUserId(user.getId()));
+        return userDetails(user);
+    }
+
+    /** 본사 권한이 있으면 platform 클레임을 싣는다. 테넌트 역할은 들어가지 않는다. */
+    private CustomUserDetails userDetails(UserEntity user) {
+        AccessTokenClaims claims = AccessTokenClaims.platform(platformRoles.findAllWithRoleByUserId(user.getId()));
+        return new CustomUserDetails(user, user.getPassword(), claims);
     }
 }

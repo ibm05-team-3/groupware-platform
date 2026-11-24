@@ -30,7 +30,7 @@ class BrowserSessionDAOTest {
         when(redis.opsForValue()).thenReturn(values);
         when(redis.opsForSet()).thenReturn(sets);
 
-        dao.save("sid", new BrowserSession("9", "refresh", "access", 1L));
+        dao.save("sid", new BrowserSession("9", "refresh", "access", 1L, null, null));
 
         verify(sets).add("auth:user-sessions:9", "sid");
         verify(redis).expire("auth:user-sessions:9", Duration.ofDays(7));

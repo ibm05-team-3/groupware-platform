@@ -11,6 +11,8 @@ public record BrowserSession(
         String sub,
         String refreshToken,
         String accessToken,
-        long accessExpiresAtEpochMilli
+        long accessExpiresAtEpochMilli,
+        LoginEntrance entrance,
+        java.util.UUID tenantId
 ) {
 }

@@ -67,6 +67,8 @@ public class GatewaySecurityConfig {
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
                 .authorizeExchange(auth -> auth
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/*/platform/login").permitAll()
+                        .pathMatchers("/*/platform/oauth2/authorization/**").permitAll()
                         .pathMatchers("/*/platform/**").hasAuthority("SCOPE_PLATFORM")
                         .pathMatchers("/user-service/user/**").permitAll()
                         // 각 서비스는 JWT 의 permissions 로 권한을 판단한다.
@@ -213,25 +215,11 @@ public class GatewaySecurityConfig {
         return converter;
     }
 
-    /** roles 는 ROLE_, scope 는 SCOPE_ 권한으로 바꾼다. */
+    /** context 가 platform 이면 본사 토큰이므로 SCOPE_PLATFORM 을 붙인다. */
     private Flux<GrantedAuthority> authorities(Jwt jwt) {
-        return Flux.concat(prefixed(jwt, "roles", "ROLE_"), prefixed(jwt, "scope", "SCOPE_"));
-    }
-
-    private static Flux<GrantedAuthority> prefixed(Jwt jwt, String claim, String prefix) {
-        return Flux.fromIterable(stringList(jwt, claim))
-                .map(value -> value.startsWith(prefix) ? value : prefix + value)
-                .map(SimpleGrantedAuthority::new);
-    }
-
-    private static List<String> stringList(Jwt jwt, String claim) {
-        Object value = jwt.getClaim(claim);
-        if (value instanceof List<?> values) {
-            return values.stream().map(String::valueOf).toList();
+        if ("platform".equals(jwt.getClaimAsString("context"))) {
+            return Flux.just(new SimpleGrantedAuthority("SCOPE_PLATFORM"));
         }
-        if (value instanceof String text && !text.isBlank()) {
-            return List.of(text);
-        }
-        return List.of();
+        return Flux.empty();
     }
 }

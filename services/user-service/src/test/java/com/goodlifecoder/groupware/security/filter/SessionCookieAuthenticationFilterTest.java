@@ -3,11 +3,11 @@ package com.goodlifecoder.groupware.security.filter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import com.goodlifecoder.groupware.iam.repository.UserPlatformRoleRepository;
 import com.goodlifecoder.groupware.security.http.CurrentSessionUser;
+import com.goodlifecoder.groupware.security.http.CurrentSessionUser.Principal;
+import com.goodlifecoder.groupware.security.session.LoginEntrance;
 import jakarta.servlet.FilterChain;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,9 +22,8 @@ class SessionCookieAuthenticationFilterTest {
     private static final UUID USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000007");
 
     private final CurrentSessionUser currentSessionUser = mock(CurrentSessionUser.class);
-    private final UserPlatformRoleRepository platformRoles = mock(UserPlatformRoleRepository.class);
     private final SessionCookieAuthenticationFilter filter =
-            new SessionCookieAuthenticationFilter(currentSessionUser, platformRoles);
+            new SessionCookieAuthenticationFilter(currentSessionUser);
 
     @AfterEach
     void clearSecurityContext() {
@@ -34,27 +33,25 @@ class SessionCookieAuthenticationFilterTest {
     @Test
     void missingSessionDoesNotAuthenticate() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/user/session");
-        when(currentSessionUser.id(request)).thenReturn(Optional.empty());
+        when(currentSessionUser.principal(request)).thenReturn(Optional.empty());
 
         filter.doFilter(request, new MockHttpServletResponse(), mock(FilterChain.class));
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
-        verifyNoInteractions(platformRoles);
     }
 
     @Test
-    void sessionOnOtherPathDoesNotLookUpPlatformRole() throws Exception {
+    void sessionOnOtherPathHasNoPlatformAuthority() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/user/session");
-        when(currentSessionUser.id(request)).thenReturn(Optional.of(USER_ID));
+        when(currentSessionUser.principal(request)).thenReturn(Optional.of(principal(LoginEntrance.PLATFORM)));
 
         filter.doFilter(request, new MockHttpServletResponse(), mock(FilterChain.class));
 
         assertThat(SecurityContextHolder.getContext().getAuthentication().getAuthorities()).isEmpty();
-        verifyNoInteractions(platformRoles);
     }
 
     @Test
-    void internalAccessSkipsSessionAndPlatformRole() throws Exception {
+    void internalAccessSkipsSession() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/session/access");
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain chain = mock(FilterChain.class);
@@ -62,16 +59,13 @@ class SessionCookieAuthenticationFilterTest {
         filter.doFilter(request, response, chain);
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
-        verifyNoInteractions(currentSessionUser, platformRoles);
         verify(chain).doFilter(request, response);
     }
 
     @Test
-    void platformPathUnderContextPathLooksUpRole() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/user-service/platform/session");
-        request.setContextPath("/user-service");
-        when(currentSessionUser.id(request)).thenReturn(Optional.of(USER_ID));
-        when(platformRoles.existsByIdUserId(USER_ID)).thenReturn(true);
+    void platformLoginSessionGetsPlatformAuthority() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/platform/members");
+        when(currentSessionUser.principal(request)).thenReturn(Optional.of(principal(LoginEntrance.PLATFORM)));
 
         filter.doFilter(request, new MockHttpServletResponse(), mock(FilterChain.class));
 
@@ -81,10 +75,9 @@ class SessionCookieAuthenticationFilterTest {
     }
 
     @Test
-    void platformPathWithoutRoleHasNoAuthority() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/platform/session");
-        when(currentSessionUser.id(request)).thenReturn(Optional.of(USER_ID));
-        when(platformRoles.existsByIdUserId(USER_ID)).thenReturn(false);
+    void tenantSessionOnPlatformPathHasNoAuthority() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/platform/members");
+        when(currentSessionUser.principal(request)).thenReturn(Optional.of(principal(LoginEntrance.TENANT)));
 
         filter.doFilter(request, new MockHttpServletResponse(), mock(FilterChain.class));
 
@@ -92,15 +85,17 @@ class SessionCookieAuthenticationFilterTest {
     }
 
     @Test
-    void platformPathWithRoleGetsPlatformAuthority() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/platform/members");
-        when(currentSessionUser.id(request)).thenReturn(Optional.of(USER_ID));
-        when(platformRoles.existsByIdUserId(USER_ID)).thenReturn(true);
+    void accountSessionOnPlatformPathHasNoAuthority() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/user-service/platform/session");
+        request.setContextPath("/user-service");
+        when(currentSessionUser.principal(request)).thenReturn(Optional.of(principal(null)));
 
         filter.doFilter(request, new MockHttpServletResponse(), mock(FilterChain.class));
 
-        assertThat(SecurityContextHolder.getContext().getAuthentication().getAuthorities())
-                .extracting(authority -> authority.getAuthority())
-                .containsExactly(SessionCookieAuthenticationFilter.PLATFORM_AUTHORITY);
+        assertThat(SecurityContextHolder.getContext().getAuthentication().getAuthorities()).isEmpty();
+    }
+
+    private static Principal principal(LoginEntrance entrance) {
+        return new Principal(USER_ID, entrance);
     }
 }

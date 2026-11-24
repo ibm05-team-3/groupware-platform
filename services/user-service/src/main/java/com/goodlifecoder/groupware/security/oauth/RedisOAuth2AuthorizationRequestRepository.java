@@ -86,6 +86,7 @@ public class RedisOAuth2AuthorizationRequestRepository
                     // The callback deletes this transaction before the success handler runs.
                     SocialReturnPath.remember(request, saved);
                     RootSignupOAuth.remember(request, saved);
+                    LoginEntranceOAuth.remember(request, saved);
                     return saved;
                 })
                 .orElse(null);

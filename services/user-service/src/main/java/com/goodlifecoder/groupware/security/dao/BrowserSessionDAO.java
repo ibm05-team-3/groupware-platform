@@ -3,6 +3,7 @@ package com.goodlifecoder.groupware.security.dao;
 import com.goodlifecoder.groupware.security.config.AuthProperties;
 import com.goodlifecoder.groupware.security.session.BrowserSession;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -32,7 +33,8 @@ public class BrowserSessionDAO {
 
     private final AuthProperties authProperties;
     private final StringRedisTemplate redis;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
 
     /** 새 세션 번호를 만들어 저장하고 그 번호를 돌려준다. */
     public String saveNew(BrowserSession session) {
