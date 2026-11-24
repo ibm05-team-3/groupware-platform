@@ -54,7 +54,7 @@ public class AuthController {
 
     /**
      * 본사 세션 확인. 맞으면 본문 없이 204.
-     * 세션이 없으면 401, 본사 역할이 없으면 403 은 필터와 보안 설정이 돌려준다.
+     * 세션이 없으면 401, 본사 로그인 세션이 아니면 403 은 필터와 보안 설정이 돌려준다.
      */
     @GetMapping("/platform/session")
     public ResponseEntity<Void> adminSession() {

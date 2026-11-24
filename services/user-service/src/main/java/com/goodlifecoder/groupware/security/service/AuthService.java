@@ -115,9 +115,14 @@ public class AuthService {
         return claims.map(value -> browserSessionDAO.saveNew(issue(accessSub, value, LoginEntrance.TENANT)));
     }
 
+    /** 세션을 읽는다. 없으면 비운다. */
+    public Optional<BrowserSession> findBrowserSession(String sessionId) {
+        return browserSessionDAO.find(sessionId);
+    }
+
     /** 세션의 회원 번호. 세션이 없으면 비운다. */
     public Optional<String> sessionSubject(String sessionId) {
-        return browserSessionDAO.find(sessionId).map(BrowserSession::sub);
+        return findBrowserSession(sessionId).map(BrowserSession::sub);
     }
 
     /**

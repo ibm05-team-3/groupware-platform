@@ -1,6 +1,5 @@
 package com.goodlifecoder.groupware.security.config;
 
-import com.goodlifecoder.groupware.iam.repository.UserPlatformRoleRepository;
 import com.goodlifecoder.groupware.security.filter.LoginFilter;
 import com.goodlifecoder.groupware.security.filter.SessionCookieAuthenticationFilter;
 import com.goodlifecoder.groupware.security.handler.LoginSuccessHandler;
@@ -42,7 +41,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * 본사 소셜은 /platform/oauth2/authorization 에서 시작하고 본사 토큰만 발급한다.
  * 세션은 STATELESS 이고 CSRF, 폼 로그인, HTTP Basic 은 끈다.
  * 아래에 적은 공개 주소만 통과하고, 나머지는 세션 쿠키가 있어야 한다.
- * /platform/** 는 본사 역할이 있어야 한다. 게이트웨이를 우회해도 같다.
+ * /platform/** 는 본사 로그인 세션이어야 한다. 게이트웨이의 context platform 과 같다.
  *
  * @author 조휘재
  * 작성일: 2026-11-23
@@ -65,7 +64,6 @@ public class SecurityConfig {
     private final AuthService authService;
     private final SessionCookieFactory sessionCookieFactory;
     private final CurrentSessionUser currentSessionUser;
-    private final UserPlatformRoleRepository platformRoles;
     private final RedisOAuth2AuthorizationRequestRepository authorizationRequestRepository;
 
     /** 이메일 비밀번호 해시. DelegatingPasswordEncoder 를 쓴다. */
@@ -181,7 +179,7 @@ public class SecurityConfig {
                 .addFilterAt(memberLogin, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(platformLogin, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(
-                        new SessionCookieAuthenticationFilter(currentSessionUser, platformRoles),
+                        new SessionCookieAuthenticationFilter(currentSessionUser),
                         UsernamePasswordAuthenticationFilter.class
                 );
 
