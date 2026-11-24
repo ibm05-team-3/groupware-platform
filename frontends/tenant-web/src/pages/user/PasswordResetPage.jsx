@@ -32,10 +32,10 @@ function AuthShell({ title, children }) {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
       <div className="grid w-full max-w-md gap-6">
-        <Link to="/" className="text-center text-2xl font-semibold text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+        <Link to="/" className="text-center font-brand text-2xl font-bold tracking-wide text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
           GROUPWARE
         </Link>
-        <div className="grid w-full gap-4 sm:gap-5">
+        <div className="grid w-full gap-4 rounded-lg border border-main/15 bg-light p-6 shadow-sm sm:gap-5 sm:p-8">
           <h2 className="text-xl font-semibold text-main sm:text-2xl">{title}</h2>
           {children}
         </div>

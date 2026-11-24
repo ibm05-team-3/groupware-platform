@@ -6,6 +6,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import '../../assets/auth/google-sign-in.css'
+import { GoogleLogo, NaverLogo } from './SocialLogos'
 
 const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL
 
@@ -72,10 +73,10 @@ function LoginPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
       <div className="grid w-full max-w-md gap-6">
-        <Link to="/" className="text-center text-2xl font-semibold text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+        <Link to="/" className="text-center font-brand text-2xl font-bold tracking-wide text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
           GROUPWARE
         </Link>
-        <form onSubmit={handleSubmit} className="grid w-full gap-4 sm:gap-5">
+        <form onSubmit={handleSubmit} className="grid w-full gap-4 rounded-lg border border-main/15 bg-light p-6 shadow-sm sm:gap-5 sm:p-8">
           <h2 className="text-xl font-semibold text-main sm:text-2xl">로그인</h2>
           <TextField
             id="email"
@@ -130,15 +131,19 @@ function LoginPage() {
             href={socialLoginUrl('google')}
           >
             <span className="gsi-material-button-content-wrapper">
+              <GoogleLogo />
               <span className="gsi-material-button-contents">Google로 로그인</span>
             </span>
           </a>
           <a
-            className="flex h-10 w-full items-center rounded-md no-underline"
+            className="relative flex h-10 w-full items-center justify-center rounded-md no-underline"
             style={{ backgroundColor: '#03A94D' }}
             href={socialLoginUrl('naver')}
           >
-            <span className="flex-1 text-center text-sm font-medium text-white">네이버 로그인</span>
+            <span className="absolute left-1 flex">
+              <NaverLogo />
+            </span>
+            <span className="text-sm font-medium text-white">네이버 로그인</span>
           </a>
           {result !== '' && (
             <p className="max-h-[40dvh] min-w-0 overflow-auto whitespace-pre-wrap break-all rounded-lg border border-main/20 bg-white p-3 text-sm">

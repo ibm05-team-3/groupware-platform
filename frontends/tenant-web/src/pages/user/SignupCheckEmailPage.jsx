@@ -125,10 +125,10 @@ function SignupCheckEmailPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
       <div className="grid w-full max-w-md gap-6">
-        <Link to="/" className="text-center text-2xl font-semibold text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+        <Link to="/" className="text-center font-brand text-2xl font-bold tracking-wide text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
           GROUPWARE
         </Link>
-        <form onSubmit={confirm} className="grid w-full gap-4 sm:gap-5">
+        <form onSubmit={confirm} className="grid w-full gap-4 rounded-lg border border-main/15 bg-light p-6 shadow-sm sm:gap-5 sm:p-8">
           <h2 className="text-xl font-semibold text-main sm:text-2xl">이메일을 확인해 주세요</h2>
           <p className="min-w-0 text-sm break-all text-text sm:text-base">{email}로 메일을 보냈습니다. 받은 확인 코드를 입력해 주세요.</p>
           <p className="text-sm text-text/70">메일이 보이지 않으면 스팸함도 확인해 주세요. 코드는 10분 동안만 쓸 수 있습니다. 확인하지 않으면 7일 뒤에 가입 정보가 지워지고, 그 이메일로 다시 가입할 수 있습니다.</p>

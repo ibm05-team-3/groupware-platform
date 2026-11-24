@@ -85,10 +85,10 @@ function TenantCreatePage() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
       <div className="grid w-full max-w-md gap-6">
-        <Link to="/" className="text-center text-2xl font-semibold text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+        <Link to="/" className="text-center font-brand text-2xl font-bold tracking-wide text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
           GROUPWARE
         </Link>
-        <form onSubmit={handleSubmit} className="grid w-full gap-4 sm:gap-5">
+        <form onSubmit={handleSubmit} className="grid w-full gap-4 rounded-lg border border-main/15 bg-light p-6 shadow-sm sm:gap-5 sm:p-8">
           <h2 className="text-xl font-semibold text-main sm:text-2xl">테넌트 만들기</h2>
           <label htmlFor="name" className="grid gap-1.5 text-sm font-medium text-text sm:text-base">
             이름

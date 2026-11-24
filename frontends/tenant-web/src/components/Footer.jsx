@@ -11,8 +11,8 @@ const year = new Date().getFullYear()
 function Footer() {
 
   return (
-    <footer className="border-t border-main/15 px-4 py-4 sm:px-8 md:px-12">
-      <Link to="/" className="inline-block text-lg font-semibold text-main focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+    <footer className="border-t border-main/15 bg-light px-4 py-4 sm:px-8 md:px-12">
+      <Link to="/" className="inline-block font-brand text-lg font-bold tracking-wide text-main focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
         GROUPWARE
       </Link>
       <p className="mt-3">

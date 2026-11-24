@@ -131,14 +131,14 @@ function Header() {
   const session = useSession()
 
   return (
-    <header className="border-b border-main/15">
+    <header className="border-b border-main/15 bg-header">
       <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-8 md:px-12">
         <NavLink
           to="/"
           end
           className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
-          <span className="text-lg font-semibold text-main">GROUPWARE</span>
+          <span className="font-brand text-lg font-bold tracking-wide text-main">GROUPWARE</span>
         </NavLink>
         <nav aria-label="메뉴" className="flex items-center gap-1">
           {session.status === 'ready' && (session.authenticated ? <MyMenu nickname={session.nickname} /> : <AuthButtons />)}

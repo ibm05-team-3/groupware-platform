@@ -96,7 +96,7 @@ function SubdomainHeader() {
   const session = useSession()
 
   return (
-    <header className="border-b border-main/15 px-4 py-3 sm:px-8 md:px-12">
+    <header className="border-b border-main/15 bg-header px-4 py-3 sm:px-8 md:px-12">
       <div className="flex items-center justify-between gap-3">
         <nav className="flex flex-wrap gap-1" aria-label="테넌트 메뉴">
           {MENUS.map((item) => (
