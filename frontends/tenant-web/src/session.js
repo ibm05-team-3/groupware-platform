@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react'
 
 const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL
-const SESSION_REFRESH = 'coliving-session-refresh'
+const SESSION_REFRESH = 'groupware-session-refresh'
 const EMPTY_SESSION = { status: 'ready', authenticated: false, userId: null, nickname: null }
 
 /** GET /user/session 본문. userId 는 UUID 문자열이고, 닉네임이 없으면 필드가 빠진다. */

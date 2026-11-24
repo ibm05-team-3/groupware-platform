@@ -3,7 +3,7 @@
  * 작성일: 2026-10-30
  */
 
-export const SIGNUP_EMAIL_STORAGE_KEY = 'coliving.signupEmail'
+export const SIGNUP_EMAIL_STORAGE_KEY = 'groupware.signupEmail'
 const SIGNUP_TOKEN_STORAGE_KEY = 'groupware.signupToken'
 
 /** 가입 안내 화면에 다시 보여 줄 이메일을 세션에 넣는다. 저장이 막혀도 던지지 않는다. */

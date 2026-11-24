@@ -1,4 +1,4 @@
-# user-web 이미지 (멀티 스테이지: Vite 빌드 → nginx)
+# tenant-web 이미지 (멀티 스테이지: Vite 빌드 → nginx)
 # VITE_ 값은 빌드 때 박힌다. API 주소를 바꾸면 이미지를 다시 만든다.
 FROM node:22-alpine AS build
 WORKDIR /app
