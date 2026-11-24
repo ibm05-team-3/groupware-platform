@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* 디자인 규칙: Deep Navy, Trust Blue, Teal Accent, Soft Emerald, Light Background */
+@theme {
+  /* Deep Navy. 제목과 본문 글자 */
+  --color-text: #0F172A;
+  /* Deep Navy. 헤더와 사이드바 배경 */
+  --color-navy: #0F172A;
+  /* Trust Blue. 주요 버튼, 링크, 활성 메뉴 */
+  --color-main: #2563EB;
+  /* Teal Accent. 배지와 작은 강조 */
+  --color-accent: #0D9488;
+  /* Soft Emerald. 성공, 완료, 승인 상태 */
+  --color-success: #10B981;
+  /* Light Background. 페이지와 섹션 배경 */
+  --color-background: #F8FAFC;
+}
