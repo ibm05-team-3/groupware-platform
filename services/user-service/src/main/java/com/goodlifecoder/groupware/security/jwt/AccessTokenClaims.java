@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * 액세스 토큰에 실을 권한. 역할 코드는 넣지 않는다.
+ * 액세스 토큰에 실을 권한.
  * 본사 토큰은 tenantId 가 없다. 테넌트 토큰에는 본사 권한을 넣지 않는다.
  */
 public record AccessTokenClaims(TokenContext context, List<String> permissions, UUID tenantId) {
