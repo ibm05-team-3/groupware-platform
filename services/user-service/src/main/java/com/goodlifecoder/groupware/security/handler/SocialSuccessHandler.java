@@ -1,0 +1,51 @@
+package com.goodlifecoder.groupware.security.handler;
+
+import com.goodlifecoder.groupware.common.config.AppProperties;
+import com.goodlifecoder.groupware.security.http.SessionCookieFactory;
+import com.goodlifecoder.groupware.security.oauth.LoginEntranceOAuth;
+import com.goodlifecoder.groupware.security.oauth.SocialReturnPath;
+import com.goodlifecoder.groupware.security.service.AuthService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+/**
+ * 소셜 로그인 성공. 세션 쿠키를 심고 user-web 의 return_to 로 보낸다.
+ * 본사 소셜은 본사 토큰만 발급하고, 본사 역할이 없으면 쿠키 없이 프론트로 보낸다.
+ *
+ * @author 조휘재
+ * 작성일: 2026-11-23
+ */
+@Component
+@RequiredArgsConstructor
+public class SocialSuccessHandler implements AuthenticationSuccessHandler {
+
+    private final AuthService authService;
+    private final AppProperties appProperties;
+    private final SessionCookieFactory sessionCookieFactory;
+
+    /** 세션 쿠키를 심고 안전한 return_to 로 리다이렉트한다. */
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        // authentication.getName() => CustomOAuth2User 의 getName 과 동일한 값
+        String sub = authentication.getName();
+        String previous = sessionCookieFactory.read(request).orElse(null);
+        String sessionId = LoginEntranceOAuth.platform(request)
+                ? authService.openPlatformSession(sub, previous).orElse(null)
+                : authService.openSession(sub, previous);
+        if (sessionId == null) {
+            response.sendRedirect(appProperties.frontend().url());
+            return;
+        }
+
+        response.addHeader(HttpHeaders.SET_COOKIE, sessionCookieFactory.write(sessionId).toString());
+        response.sendRedirect(SocialReturnPath.redirect(appProperties.frontend().url(), request));
+    }
+}

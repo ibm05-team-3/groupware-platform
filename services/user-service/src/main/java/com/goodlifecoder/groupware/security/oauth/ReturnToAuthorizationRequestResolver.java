@@ -1,0 +1,62 @@
+package com.goodlifecoder.groupware.security.oauth;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+
+/**
+ * 인가 요청에 안전한 return_to 를 붙인다. 없거나 거절되면 원 요청을 그대로 둔다.
+ *
+ * @author 조휘재
+ * 작성일: 2026-11-23
+ */
+public final class ReturnToAuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
+
+    private final OAuth2AuthorizationRequestResolver delegate;
+    private final boolean rootSignup;
+
+    /** PKCE 가 이미 붙은 해석기에 return_to 와 루트 가입 토큰 보관을 얹는다. */
+    public ReturnToAuthorizationRequestResolver(OAuth2AuthorizationRequestResolver delegate) {
+        this(delegate, true);
+    }
+
+    /** 본사 소셜은 루트 가입 토큰을 싣지 않는다. */
+    public ReturnToAuthorizationRequestResolver(OAuth2AuthorizationRequestResolver delegate, boolean rootSignup) {
+        this.delegate = delegate;
+        this.rootSignup = rootSignup;
+    }
+
+    /** 등록 id 없이 해석한 요청에 return_to 를 붙인다. */
+    @Override
+    public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
+        return attach(delegate.resolve(request), request);
+    }
+
+    /** 등록 id 로 해석한 요청에 return_to 를 붙인다. */
+    @Override
+    public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
+        return attach(delegate.resolve(request, clientRegistrationId), request);
+    }
+
+    /** 안전한 return_to 만 속성으로 넣는다. authorizationRequestUri 는 유지한다. */
+    private OAuth2AuthorizationRequest attach(
+            OAuth2AuthorizationRequest authorizationRequest,
+            HttpServletRequest request
+    ) {
+        if (authorizationRequest == null) {
+            return null;
+        }
+        OAuth2AuthorizationRequest withRootSignup = rootSignup
+                ? RootSignupOAuth.attach(authorizationRequest, request)
+                : authorizationRequest;
+        String returnTo = SocialReturnPath.sanitize(request.getParameter(SocialReturnPath.ATTRIBUTE));
+        if (returnTo == null) {
+            return withRootSignup;
+        }
+        // from() does not copy authorizationRequestUri, and build() would generate a new one.
+        return OAuth2AuthorizationRequest.from(withRootSignup)
+                .authorizationRequestUri(withRootSignup.getAuthorizationRequestUri())
+                .attributes(attributes -> attributes.put(SocialReturnPath.ATTRIBUTE, returnTo))
+                .build();
+    }
+}

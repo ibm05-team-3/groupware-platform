@@ -29,7 +29,7 @@ public class SessionCookieBearerWebFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if (hasBearer(exchange) || isAnonymousAuthRequest(exchange)) {
+        if (hasBearer(exchange)) {
             return chain.filter(exchange);
         }
         String cookie = exchange.getRequest().getHeaders().getFirst(HttpHeaders.COOKIE);
@@ -68,18 +68,6 @@ public class SessionCookieBearerWebFilter implements WebFilter {
     private boolean hasBearer(ServerWebExchange exchange) {
         String header = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         return header != null && header.startsWith("Bearer ") && header.length() > "Bearer ".length();
-    }
-
-    private boolean isAnonymousAuthRequest(ServerWebExchange exchange) {
-        String path = exchange.getRequest().getURI().getPath();
-        return path.endsWith("/user/login")
-                || path.endsWith("/user/logout")
-                || path.endsWith("/user/password-reset")
-                || path.endsWith("/user/password-reset/confirm")
-                || path.endsWith("/user/signup/email-verification")
-                || path.endsWith("/user/signup/email-verification/resend")
-                || path.contains("/oauth2/authorization/")
-                || path.contains("/oauth2/code/");
     }
 
     private ServerWebExchange withBearer(ServerWebExchange exchange, String accessToken) {

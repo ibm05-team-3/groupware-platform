@@ -20,14 +20,8 @@ resources:
   - platform/config-server.yaml
   - platform/api-gateway.yaml
   - platform/user-service.yaml
-  - platform/property-service.yaml
-  - platform/community-service.yaml
-  - platform/reservation-service.yaml
-  - platform/dashboard-service.yaml
-  - platform/document-service.yaml
-  - platform/contract-service.yaml
-  - platform/hr-web.yaml
-  - platform/control-web.yaml
+  - platform/tenant-web.yaml
+  - platform/platform-web.yaml
   - platform/ingress.yaml
   - infra/schema-job.yaml
 images:
@@ -39,31 +33,14 @@ images:
     newTag: latest
   - name: ghcr.io/ibm05-team-3/user-service
     newTag: latest
-  - name: ghcr.io/ibm05-team-3/property-service
+  - name: ghcr.io/ibm05-team-3/tenant-web
     newTag: latest
-  - name: ghcr.io/ibm05-team-3/community-service
-    newTag: latest
-  - name: ghcr.io/ibm05-team-3/reservation-service
-    newTag: latest
-  - name: ghcr.io/ibm05-team-3/dashboard-service
-    newTag: latest
-  - name: ghcr.io/ibm05-team-3/document-service
-    newTag: latest
-  - name: ghcr.io/ibm05-team-3/contract-service
-    newTag: latest
-  - name: ghcr.io/ibm05-team-3/hr-web
-    newTag: latest
-  - name: ghcr.io/ibm05-team-3/control-web
+  - name: ghcr.io/ibm05-team-3/platform-web
     newTag: latest
 configMapGenerator:
   - name: groupware-schema
     files:
       - user.sql=../../services/user-service/src/main/resources/db/schema.sql
-      - property.sql=../../services/property-service/src/main/resources/db/schema.sql
-      - reservation.sql=../../services/reservation-service/src/main/resources/db/schema.sql
-      - document.sql=../../services/document-service/src/main/resources/db/schema.sql
-      - contract.sql=../../services/contract-service/src/main/resources/db/schema.sql
-      - community.sql=../../services/community-service/src/main/resources/db/schema.sql
     options:
       disableNameSuffixHash: true
       annotations:

@@ -55,11 +55,6 @@ spec:
               }
               wait_ready postgres
               psql -h postgres -d user_service -v ON_ERROR_STOP=1 -f /schema/user.sql
-              psql -h postgres -d property_service -v ON_ERROR_STOP=1 -f /schema/property.sql
-              psql -h postgres -d reservation_service -v ON_ERROR_STOP=1 -f /schema/reservation.sql
-              psql -h postgres -d document_service -v ON_ERROR_STOP=1 -f /schema/document.sql
-              psql -h postgres -d contract_service -v ON_ERROR_STOP=1 -f /schema/contract.sql
-              psql -h postgres -d community_service -v ON_ERROR_STOP=1 -f /schema/community.sql
           volumeMounts:
             - name: schema
               mountPath: /schema

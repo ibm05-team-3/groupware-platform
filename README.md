@@ -6,7 +6,7 @@ IBM 5기 3팀 AI 에이전트 그룹웨어 SaaS 플랫폼
 
 로컬 설치 순서는 [설치 가이드](docs/설치-가이드.md)를 따릅니다.
 
-프론트엔드 문서는 [control-web](frontends/control-web/README.md)과 [hr-web](frontends/hr-web/README.md)에 있습니다.
+프론트엔드 문서는 [platform-web](frontends/platform-web/README.md)과 [tenant-web](frontends/tenant-web/README.md)에 있습니다.
 
 ## 개발 환경
 
@@ -18,7 +18,7 @@ IBM 5기 3팀 AI 에이전트 그룹웨어 SaaS 플랫폼
 | 설정 전파 | Spring Cloud Bus + RabbitMQ |
 | RDBMS | PostgreSQL 17 + pgvector |
 | 캐시 | Redis |
-| 서비스 간 통신 | gRPC (동기), Kafka (비동기, KRaft) |
+| 서비스 간 통신 | RestClient + @HttpExchange (동기), Kafka (비동기, KRaft) |
 | Frontend | React + Vite + React Router + Tailwind CSS 4 |
 | CI/CD 파이프라인 | ArgoCD |
 | 컨테이너화 및 배포 | Docker + Kubernetes |

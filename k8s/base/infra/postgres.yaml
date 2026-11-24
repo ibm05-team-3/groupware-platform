@@ -10,18 +10,7 @@ metadata:
 data:
   01-databases.sql: |
     -- 빈 데이터베이스만 만든다. schema.sql 은 infra/schema-job.yaml 이 각 DB에 적용한다.
-    -- schema-dev.sql 은 DROP DATABASE 가 있어 여기서 실행하지 않는다.
     CREATE DATABASE user_service;
-    CREATE DATABASE property_service;
-    CREATE DATABASE reservation_service;
-    CREATE DATABASE document_service;
-    CREATE DATABASE contract_service;
-    CREATE DATABASE community_service;
-    \c contract_service
-    CREATE EXTENSION IF NOT EXISTS btree_gist;
-    \c community_service
-    CREATE EXTENSION IF NOT EXISTS vector;
-    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 ---
 apiVersion: v1
 kind: Service
