@@ -1,6 +1,6 @@
 /**
  * @author 조휘재
- * 작성일: 2026-10-30
+ * 작성일: 2026-11-24
  */
 
 export const SIGNUP_EMAIL_STORAGE_KEY = 'groupware.signupEmail'

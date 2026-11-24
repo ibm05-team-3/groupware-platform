@@ -1,6 +1,6 @@
 /**
  * @author 조휘재
- * 작성일: 2026-10-18
+ * 작성일: 2026-11-24
  */
 
 import { useEffect, useState } from 'react'

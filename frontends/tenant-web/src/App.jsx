@@ -52,47 +52,59 @@ function App() {
     <Routes>
       {/**
        * @author 조휘재
-       * 작성일: 2026-10-18
+       * 작성일: 2026-11-24
        */}
       <Route path="/login" element={<LoginPage />} />
       {/**
        * @author 조휘재
-       * 작성일: 2026-10-30
+       * 작성일: 2026-11-24
        */}
       <Route path="/signup" element={<SignupPage />} />
       {/**
        * @author 조휘재
-       * 작성일: 2026-10-30
+       * 작성일: 2026-11-24
        */}
       <Route path="/signup/check-email" element={<SignupCheckEmailPage />} />
       {/**
        * @author 조휘재
-       * 작성일: 2026-11-11
+       * 작성일: 2026-11-24
        */}
       <Route path="/signup/confirm" element={<SignupConfirmPage />} />
       {/**
        * @author 조휘재
-       * 작성일: 2026-11-11
+       * 작성일: 2026-11-24
        */}
       <Route path="/password-reset" element={<PasswordResetPage />} />
+      {/**
+       * @author 조휘재
+       * 작성일: 2026-11-24
+       */}
       <Route path="/tenants" element={<TenantSelectPage />} />
+      {/**
+       * @author 조휘재
+       * 작성일: 2026-11-24
+       */}
       <Route path="/tenants/new" element={<TenantCreatePage />} />
+      {/**
+       * @author 조휘재
+       * 작성일: 2026-11-24
+       */}
       <Route path="/logout" element={<LogoutPage />} />
 
       {/**
        * @author 조휘재
-       * 작성일: 2026-10-27
+       * 작성일: 2026-11-24
        */}
       <Route element={<UserLayout />}>
 
         {/**
          * @author 조휘재
-         * 작성일: 2026-10-27
+         * 작성일: 2026-11-24
          */}
         <Route path="/" element={<HomePage />} />
         {/**
          * @author 조휘재
-         * 작성일: 2026-11-05
+         * 작성일: 2026-11-24
          */}
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
 

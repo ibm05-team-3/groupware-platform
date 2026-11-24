@@ -1,6 +1,6 @@
 /**
  * @author 조휘재
- * 작성일: 2026-10-29
+ * 작성일: 2026-11-24
  */
 
 import { useEffect, useState } from 'react'
@@ -21,7 +21,7 @@ function sessionFromBody(body) {
 /**
  * 세션을 다시 읽게 알린다. signedOut 이면 빈 세션으로 먼저 바꾼다.
  * @author simoon7
- * 작성일: 2026-11-03
+ * 작성일: 2026-11-24
  */
 export function refreshSession({ signedOut = false } = {}) {
   window.dispatchEvent(new CustomEvent(SESSION_REFRESH, { detail: { signedOut } }))
