@@ -16,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 /**
- * 이메일 로그인과 세션 갱신에 쓰는 UserDetails 조회.
+ * 이메일 로그인과 세션 갱신에 쓰는 계정 조회.
+ * 본사 역할은 계정 조회에 넣지 않고, 본사 로그인과 본사 세션 갱신만 platformClaims 로 읽는다.
  *
  * @author 조휘재
  * 작성일: 2026-11-23
@@ -54,9 +55,14 @@ public class CustomUserDetailsService  implements UserDetailsService {
         return userDetails(user);
     }
 
-    /** 본사 권한이 있으면 platform 클레임을 싣는다. 테넌트 역할은 들어가지 않는다. */
+    /** 본사 로그인과 본사 세션 갱신에서만 부른다. */
+    @Transactional(readOnly = true)
+    public AccessTokenClaims platformClaims(UUID userId) {
+        return AccessTokenClaims.platform(platformRoles.findAllWithRoleByUserId(userId));
+    }
+
+    /** 계정 상태만 담는다. 본사 역할은 읽지 않는다. */
     private CustomUserDetails userDetails(UserEntity user) {
-        AccessTokenClaims claims = AccessTokenClaims.platform(platformRoles.findAllWithRoleByUserId(user.getId()));
-        return new CustomUserDetails(user, user.getPassword(), claims);
+        return new CustomUserDetails(user, user.getPassword());
     }
 }

@@ -5,7 +5,6 @@ import com.goodlifecoder.groupware.security.jwt.AccessTokenClaims;
 import com.goodlifecoder.groupware.security.jwt.TokenContext;
 import com.goodlifecoder.groupware.security.dao.BrowserSessionDAO;
 import com.goodlifecoder.groupware.security.dao.RefreshTokenDAO;
-import com.goodlifecoder.groupware.security.entity.CustomUserDetails;
 import com.goodlifecoder.groupware.security.jwt.AccessTokenProvider;
 import com.goodlifecoder.groupware.security.session.BrowserSession;
 import com.goodlifecoder.groupware.security.session.LoginEntrance;
@@ -59,8 +58,8 @@ public class AuthService {
 
     /** 본사 역할이 있을 때만 이전 세션을 끊고 platform 토큰을 발급한다. */
     public Optional<String> openPlatformSession(String accessSub, String previousSessionId) {
-        UserDetails userDetails = findAndValidateUser(accessSub);
-        AccessTokenClaims claims = claimsOf(userDetails);
+        findAndValidateUser(accessSub);
+        AccessTokenClaims claims = userDetailsService.platformClaims(userId(accessSub));
         if (claims.context() != TokenContext.PLATFORM) {
             return Optional.empty();
         }
@@ -106,13 +105,6 @@ public class AuthService {
         refreshTokenDAO.deleteTokenHash(session.refreshToken());
         browserSessionDAO.save(sessionId, issue(session.sub(), AccessTokenClaims.account(), null));
         return Optional.of(true);
-    }
-
-    /** 그 테넌트 토큰으로 새 세션을 연다. 소속이 없으면 비운다. */
-    public Optional<String> openTenantSession(String accessSub, String tenantSlug) {
-        findAndValidateUser(accessSub);
-        Optional<AccessTokenClaims> claims = loginTokens.tenantClaims(userId(accessSub), tenantSlug);
-        return claims.map(value -> browserSessionDAO.saveNew(issue(accessSub, value, LoginEntrance.TENANT)));
     }
 
     /** 세션을 읽는다. 없으면 비운다. */
@@ -197,8 +189,8 @@ public class AuthService {
             findAndValidateUser(accessSub);
             return Optional.of(issue(accessSub, AccessTokenClaims.account(), null));
         }
-        UserDetails userDetails = findAndValidateUser(accessSub);
-        AccessTokenClaims claims = claimsOf(userDetails);
+        findAndValidateUser(accessSub);
+        AccessTokenClaims claims = userDetailsService.platformClaims(userId(accessSub));
         if (claims.context() != TokenContext.PLATFORM) {
             return Optional.empty();
         }
@@ -222,14 +214,6 @@ public class AuthService {
     /** 만료 시각에서 갱신 여유를 뺀 시각이 아직 미래면 true. */
     private boolean accessStillValid(BrowserSession session) {
         return session.accessExpiresAtEpochMilli() - authProperties.accessTokenRefreshSkew().toMillis() > Instant.now().toEpochMilli();
-    }
-
-    /** 본사 역할과 권한만 있는 토큰. tenant_id 는 넣지 않는다. */
-    private static AccessTokenClaims claimsOf(UserDetails userDetails) {
-        if (userDetails instanceof CustomUserDetails details) {
-            return details.accessTokenClaims();
-        }
-        return AccessTokenClaims.account();
     }
 
     /** 회원 번호로 계정을 읽고 잠금·비활성 여부를 확인한다. */

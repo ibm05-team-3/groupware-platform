@@ -55,7 +55,8 @@ class AuthServiceLoginTest {
 
     @Test
     void platformLoginIssuesHeadquartersClaimsOnly() {
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
+        when(userDetails.platformClaims(USER_ID)).thenReturn(headquartersClaims());
 
         assertThat(authService.openPlatformSession(SUB)).contains("sid");
 
@@ -66,21 +67,24 @@ class AuthServiceLoginTest {
         assertThat(issuedClaims().context()).isEqualTo(TokenContext.PLATFORM);
         assertThat(issuedClaims().permissions()).containsExactly("user:read");
         verify(loginTokens, never()).tenantClaims(any(), any(String.class));
+        verify(userDetails).platformClaims(USER_ID);
     }
 
     @Test
     void platformLoginWithoutAHeadquartersRoleDoesNotOpenASession() {
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of(), List.of()));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
+        when(userDetails.platformClaims(USER_ID)).thenReturn(AccessTokenClaims.account());
 
         assertThat(authService.openPlatformSession(SUB)).isEmpty();
 
         verify(sessions, never()).saveNew(any());
         verify(tokens, never()).issueAccessToken(any(), any());
+        verify(userDetails).platformClaims(USER_ID);
     }
 
     @Test
     void memberLoginDiscardsThePreviousBrowserSession() {
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
         when(sessions.find("old")).thenReturn(Optional.of(expired(LoginEntrance.TENANT, TENANT_ID)));
 
         assertThat(authService.openSession(SUB, "old")).isEqualTo("sid");
@@ -89,21 +93,24 @@ class AuthServiceLoginTest {
         verify(sessions).delete("old");
         assertThat(issuedClaims().context()).isEqualTo(TokenContext.ACCOUNT);
         assertThat(issuedClaims().permissions()).isEmpty();
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
     void platformLoginDiscardsThePreviousSessionOnlyWhenAHeadquartersRoleExists() {
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of(), List.of()));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
+        when(userDetails.platformClaims(USER_ID)).thenReturn(AccessTokenClaims.account());
 
         assertThat(authService.openPlatformSession(SUB, "old")).isEmpty();
 
         verify(sessions, never()).delete(any());
+        verify(userDetails).platformClaims(USER_ID);
     }
 
     @Test
     void leaveTenantReplacesTheSessionWithAnAccountToken() {
         when(sessions.find("sid")).thenReturn(Optional.of(expired(LoginEntrance.TENANT, TENANT_ID)));
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
 
         assertThat(authService.leaveTenant("sid")).contains(true);
 
@@ -113,6 +120,7 @@ class AuthServiceLoginTest {
         assertThat(saved.tenantId()).isNull();
         assertThat(issuedClaims().context()).isEqualTo(TokenContext.ACCOUNT);
         assertThat(issuedClaims().permissions()).isEmpty();
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
@@ -123,11 +131,12 @@ class AuthServiceLoginTest {
 
         verify(sessions, never()).save(eq("sid"), any());
         verify(tokens, never()).issueAccessToken(any(), any());
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
     void memberLoginIssuesAnEmptyToken() {
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
 
         assertThat(authService.openSession(SUB)).isEqualTo("sid");
 
@@ -137,12 +146,13 @@ class AuthServiceLoginTest {
         assertThat(issuedClaims().context()).isEqualTo(TokenContext.ACCOUNT);
         assertThat(issuedClaims().permissions()).isEmpty();
         assertThat(issuedClaims().tenantId()).isNull();
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
     void tenantEntryReplacesTheSessionWithThatTenantToken() {
         when(sessions.find("sid")).thenReturn(Optional.of(expired(null, null)));
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
         when(loginTokens.tenantClaims(USER_ID, "acme")).thenReturn(Optional.of(tenantClaims()));
 
         assertThat(authService.enterTenant("sid", "acme")).contains(true);
@@ -152,12 +162,13 @@ class AuthServiceLoginTest {
         assertThat(saved.entrance()).isEqualTo(LoginEntrance.TENANT);
         assertThat(saved.tenantId()).isEqualTo(TENANT_ID);
         assertThat(issuedClaims()).isEqualTo(tenantClaims());
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
     void tenantEntryFromAHeadquartersSessionDropsHeadquartersPermissions() {
         when(sessions.find("sid")).thenReturn(Optional.of(expired(LoginEntrance.PLATFORM, null)));
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
         when(loginTokens.tenantClaims(USER_ID, "acme")).thenReturn(Optional.of(tenantClaims()));
 
         assertThat(authService.enterTenant("sid", "acme")).contains(true);
@@ -165,18 +176,20 @@ class AuthServiceLoginTest {
         assertThat(replacedSession().entrance()).isEqualTo(LoginEntrance.TENANT);
         assertThat(issuedClaims().permissions()).containsExactly("payroll:read");
         assertThat(issuedClaims().tenantId()).isEqualTo(TENANT_ID);
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
     void tenantEntryWithoutAMembershipLeavesTheSession() {
         when(sessions.find("sid")).thenReturn(Optional.of(expired(null, null)));
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of(), List.of()));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
         when(loginTokens.tenantClaims(USER_ID, "missing")).thenReturn(Optional.empty());
 
         assertThat(authService.enterTenant("sid", "missing")).contains(false);
 
         verify(sessions, never()).save(org.mockito.ArgumentMatchers.eq("sid"), any());
         verify(refreshTokens, never()).deleteTokenHash(any());
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
@@ -184,35 +197,13 @@ class AuthServiceLoginTest {
         when(sessions.find("sid")).thenReturn(Optional.empty());
 
         assertThat(authService.enterTenant("sid", "acme")).isEmpty();
-    }
 
-    @Test
-    void tenantLoginIssuesThatTenantClaimsEvenWhenTheAccountAlsoHasHeadquartersRoles() {
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
-        when(loginTokens.tenantClaims(USER_ID, "acme")).thenReturn(Optional.of(tenantClaims()));
-
-        assertThat(authService.openTenantSession(SUB, "acme")).contains("sid");
-
-        BrowserSession saved = savedSession();
-        assertThat(saved.entrance()).isEqualTo(LoginEntrance.TENANT);
-        assertThat(saved.tenantId()).isEqualTo(TENANT_ID);
-        assertThat(issuedClaims()).isEqualTo(tenantClaims());
-    }
-
-    @Test
-    void tenantLoginWithoutAnActiveMembershipDoesNotOpenASession() {
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
-        when(loginTokens.tenantClaims(USER_ID, "missing")).thenReturn(Optional.empty());
-
-        assertThat(authService.openTenantSession(SUB, "missing")).isEmpty();
-
-        verify(sessions, never()).saveNew(any());
-        verify(tokens, never()).issueAccessToken(any(), any());
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
     void socialLoginDoesNotIssueAHeadquartersToken() {
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
 
         assertThat(authService.openSession(SUB)).isEqualTo("sid");
 
@@ -223,13 +214,15 @@ class AuthServiceLoginTest {
         assertThat(issuedClaims().permissions()).isEmpty();
         assertThat(issuedClaims().tenantId()).isNull();
         verify(loginTokens, never()).tenantClaims(any(), any(String.class));
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
     void platformRefreshKeepsHeadquartersClaims() {
         when(sessions.find("sid")).thenReturn(Optional.of(expired(LoginEntrance.PLATFORM, null)));
         when(refreshTokens.findAndDelete("old-refresh")).thenReturn(Optional.of(SUB));
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
+        when(userDetails.platformClaims(USER_ID)).thenReturn(headquartersClaims());
 
         assertThat(authService.currentAccessToken("sid")).contains("access");
 
@@ -238,25 +231,28 @@ class AuthServiceLoginTest {
         assertThat(saved.tenantId()).isNull();
         assertThat(issuedClaims().context()).isEqualTo(TokenContext.PLATFORM);
         assertThat(issuedClaims().permissions()).containsExactly("user:read");
+        verify(userDetails).platformClaims(USER_ID);
     }
 
     @Test
     void platformRefreshClosesTheSessionWhenTheHeadquartersRoleIsGone() {
         when(sessions.find("sid")).thenReturn(Optional.of(expired(LoginEntrance.PLATFORM, null)));
         when(refreshTokens.findAndDelete("old-refresh")).thenReturn(Optional.of(SUB));
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of(), List.of()));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
+        when(userDetails.platformClaims(USER_ID)).thenReturn(AccessTokenClaims.account());
 
         assertThat(authService.currentAccessToken("sid")).isEmpty();
 
         verify(sessions).delete("sid");
         verify(tokens, never()).issueAccessToken(any(), any());
+        verify(userDetails).platformClaims(USER_ID);
     }
 
     @Test
     void tenantRefreshDoesNotFallBackToHeadquartersClaims() {
         when(sessions.find("sid")).thenReturn(Optional.of(expired(LoginEntrance.TENANT, TENANT_ID)));
         when(refreshTokens.findAndDelete("old-refresh")).thenReturn(Optional.of(SUB));
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
         when(loginTokens.tenantClaims(USER_ID, TENANT_ID)).thenReturn(Optional.of(tenantClaims()));
 
         assertThat(authService.currentAccessToken("sid")).contains("access");
@@ -265,26 +261,28 @@ class AuthServiceLoginTest {
         assertThat(saved.entrance()).isEqualTo(LoginEntrance.TENANT);
         assertThat(saved.tenantId()).isEqualTo(TENANT_ID);
         assertThat(issuedClaims()).isEqualTo(tenantClaims());
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
     void tenantRefreshClosesTheSessionWhenTheMembershipIsGone() {
         when(sessions.find("sid")).thenReturn(Optional.of(expired(LoginEntrance.TENANT, TENANT_ID)));
         when(refreshTokens.findAndDelete("old-refresh")).thenReturn(Optional.of(SUB));
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
         when(loginTokens.tenantClaims(USER_ID, TENANT_ID)).thenReturn(Optional.empty());
 
         assertThat(authService.currentAccessToken("sid")).isEmpty();
 
         verify(sessions).delete("sid");
         verify(tokens, never()).issueAccessToken(any(), any());
+        verify(userDetails, never()).platformClaims(any());
     }
 
     @Test
     void socialRefreshStaysEmptyEvenWhenTheAccountHasHeadquartersRoles() {
         when(sessions.find("sid")).thenReturn(Optional.of(expired(null, null)));
         when(refreshTokens.findAndDelete("old-refresh")).thenReturn(Optional.of(SUB));
-        when(userDetails.loadUserById(SUB)).thenReturn(details(List.of("ops"), List.of("user:read")));
+        when(userDetails.loadUserById(SUB)).thenReturn(details());
 
         assertThat(authService.currentAccessToken("sid")).contains("access");
 
@@ -293,6 +291,7 @@ class AuthServiceLoginTest {
         assertThat(saved.tenantId()).isNull();
         assertThat(issuedClaims().context()).isEqualTo(TokenContext.ACCOUNT);
         assertThat(issuedClaims().permissions()).isEmpty();
+        verify(userDetails, never()).platformClaims(any());
     }
 
     private BrowserSession savedSession() {
@@ -313,17 +312,17 @@ class AuthServiceLoginTest {
         return captor.getValue();
     }
 
-    private static CustomUserDetails details(List<String> roles, List<String> permissions) {
+    private static CustomUserDetails details() {
         UserEntity user = UserEntity.builder()
                 .id(USER_ID)
                 .enabled(true)
                 .accountNonLocked(true)
                 .build();
-        return new CustomUserDetails(user, "{noop}secret", platformClaims(roles, permissions));
+        return new CustomUserDetails(user, "{noop}secret");
     }
 
-    private static AccessTokenClaims platformClaims(List<String> roles, List<String> permissions) {
-        return new AccessTokenClaims(roles.isEmpty() ? TokenContext.ACCOUNT : TokenContext.PLATFORM, permissions, null);
+    private static AccessTokenClaims headquartersClaims() {
+        return new AccessTokenClaims(TokenContext.PLATFORM, List.of("user:read"), null);
     }
 
     private static AccessTokenClaims tenantClaims() {
