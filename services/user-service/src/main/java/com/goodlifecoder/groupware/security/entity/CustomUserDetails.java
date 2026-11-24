@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 이메일 로그인 주체.
  * getUsername 은 회원 id 문자열이다.
- * 본사 로그인이면 platform 권한을 싣는다. 역할 코드와 tenant_id 는 싣지 않는다.
+ * 본사 로그인이면 platform 권한을 싣는다. tenant_id 는 싣지 않는다.
  *
  * @author 조휘재
  * 작성일: 2026-11-23

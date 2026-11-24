@@ -23,8 +23,8 @@ import java.util.*;
 
 /**
  * ES256 액세스 토큰 발급. subject 는 회원 번호 문자열이다.
- * context 는 account, platform, tenant 중 하나다. permissions 에는 서비스:API 를 싣는다.
- * 테넌트 소속 토큰만 tenant_id 를 가진다. 역할 코드는 넣지 않는다.
+ * context 는 tenant, account, platform 중 하나다. permissions 에는 서비스:API 를 싣는다.
+ * 테넌트 소속 토큰만 tenant_id 를 가진다.
  *
  * @author 조휘재
  * 작성일: 2026-11-23
