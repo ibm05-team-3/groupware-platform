@@ -7,13 +7,4 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-
-  server: {
-    proxy: {
-      '/reservation-service': {
-        target: 'http://localhost:8085',
-        changeOrigin: true,
-      },
-    },
-  },
 })
