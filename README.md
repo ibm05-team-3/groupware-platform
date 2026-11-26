@@ -8,6 +8,7 @@ IBM 5기 3팀 AI 에이전트 그룹웨어 SaaS 플랫폼
 서비스를 띄우는 순서는 [첫 실행 가이드](docs/첫-실행-가이드.md)를 따릅니다.
 
 프론트엔드 문서는 [platform-web](frontends/platform-web/README.md)과 [tenant-web](frontends/tenant-web/README.md)에 있습니다.
+자료 문서는 [외부 링크](https://coliving-platform.atlassian.net/wiki/spaces/hrpayrolla/pages/22118401)에 있습니다. 이 사이트에 초대된 계정만 볼 수 있습니다.
 
 ## 개발 환경
 
