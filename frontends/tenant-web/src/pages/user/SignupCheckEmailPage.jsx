@@ -123,16 +123,16 @@ function SignupCheckEmailPage() {
   if (!email) return null
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
+    <main className="flex min-h-dvh items-center justify-center bg-white px-4 py-8 text-ink sm:px-8">
       <div className="grid w-full max-w-md gap-6">
-        <Link to="/" className="text-center font-brand text-2xl font-bold tracking-wide text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+        <Link to="/" className="font-logo text-center text-2xl font-bold tracking-wide text-brand no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:text-3xl">
           GROUPWARE
         </Link>
-        <form onSubmit={confirm} className="grid w-full gap-4 rounded-lg border border-main/15 bg-light p-6 shadow-sm sm:gap-5 sm:p-8">
-          <h2 className="text-xl font-semibold text-main sm:text-2xl">이메일을 확인해 주세요</h2>
-          <p className="min-w-0 text-sm break-all text-text sm:text-base">{email}로 메일을 보냈습니다. 받은 확인 코드를 입력해 주세요.</p>
-          <p className="text-sm text-text/70">메일이 보이지 않으면 스팸함도 확인해 주세요. 코드는 10분 동안만 쓸 수 있습니다. 확인하지 않으면 7일 뒤에 가입 정보가 지워지고, 그 이메일로 다시 가입할 수 있습니다.</p>
-          <label htmlFor="code" className="grid gap-1.5 text-sm font-medium text-text sm:text-base">
+        <form onSubmit={confirm} className="grid w-full gap-4 rounded-lg border border-line bg-label p-6 shadow-sm sm:gap-5 sm:p-8">
+          <h2 className="text-xl font-semibold text-brand sm:text-2xl">이메일을 확인해 주세요</h2>
+          <p className="min-w-0 text-sm break-all text-ink sm:text-base">{email}로 메일을 보냈습니다. 받은 확인 코드를 입력해 주세요.</p>
+          <p className="text-sm text-tool">메일이 보이지 않으면 스팸함도 확인해 주세요. 코드는 10분 동안만 쓸 수 있습니다. 확인하지 않으면 7일 뒤에 가입 정보가 지워지고, 그 이메일로 다시 가입할 수 있습니다.</p>
+          <label htmlFor="code" className="grid gap-1.5 text-sm font-medium text-ink sm:text-base">
             확인 코드
             <input
               id="code"
@@ -143,13 +143,13 @@ function SignupCheckEmailPage() {
               spellCheck={false}
               required
               onChange={(event) => setCode(event.target.value)}
-              className="rounded-lg border border-main/25 bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-main focus:ring-2 focus:ring-accent sm:px-4 sm:py-3"
+              className="rounded-lg border border-line bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-brand focus:ring-2 focus:ring-brand sm:px-4 sm:py-3"
             />
           </label>
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-lg bg-main px-4 py-3 text-sm font-semibold text-background hover:bg-main/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60 sm:text-base"
+            className="rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60 sm:text-base"
           >
             {submitting ? '확인 중' : '이메일 확인'}
           </button>
@@ -157,14 +157,14 @@ function SignupCheckEmailPage() {
             type="button"
             onClick={resend}
             disabled={resending || submitting}
-            className="rounded-lg border border-main/25 bg-white px-4 py-3 text-sm font-semibold text-main hover:bg-main/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60 sm:text-base"
+            className="rounded-lg border border-line bg-white px-4 py-3 text-sm font-semibold text-brand hover:bg-label focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60 sm:text-base"
           >
             {resending ? '보내는 중' : '확인 메일 다시 보내기'}
           </button>
-          {notice ? <p className="text-sm text-text/80">{notice}</p> : null}
+          {notice ? <p className="text-sm text-tool">{notice}</p> : null}
           <Link
             to="/login"
-            className="text-center text-sm font-semibold text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="text-center text-sm font-semibold text-brand no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             로그인
           </Link>

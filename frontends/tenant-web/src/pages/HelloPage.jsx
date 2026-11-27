@@ -8,7 +8,7 @@ function HelloPage({ title }) {
 
   return (
     <section className="px-4 py-8 sm:px-8 md:px-12">
-      <h1 className="text-xl font-semibold text-main sm:text-2xl">{title}</h1>
+      <h1 className="text-xl font-semibold text-brand sm:text-2xl">{title}</h1>
       <p className="mt-3 text-base">hello world</p>
     </section>
   )

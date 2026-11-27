@@ -21,7 +21,7 @@ import PrivacyPolicyPage from './pages/user/PrivacyPolicyPage'
 /** `acme.localhost` 처럼 테넌트 호스트로 들어온 화면. 헤더와 본문만 둔다. */
 function SubdomainApp() {
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-text">
+    <div className="flex min-h-dvh flex-col bg-white text-ink">
       <SubdomainHeader />
       <main className="flex-1">
         <Routes>

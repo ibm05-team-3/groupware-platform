@@ -14,8 +14,8 @@ const MY_LINKS = [
 
 /** 선택한 메뉴와 그 외 메뉴의 글자색과 배경을 가른다. */
 function linkClass(isActive) {
-  return `rounded-lg px-2 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-3 ${
-    isActive ? 'bg-main text-background' : 'text-text hover:bg-main/10'
+  return `rounded-lg px-2 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:px-3 ${
+    isActive ? 'bg-brand text-white' : 'text-ink hover:bg-brand/10'
   }`
 }
 
@@ -58,14 +58,14 @@ function MyMenu({ nickname }) {
         aria-controls="my-menu"
         onClick={() => setOpen((value) => !value)}
         aria-label={typeof nickname === 'string' && nickname.trim() ? nickname.trim() : 'MY'}
-        className="inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-main px-2 text-xs font-semibold text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-brand px-2 text-xs font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
       >
         {typeof nickname === 'string' && nickname.trim() ? nickname.trim().slice(0, 1) : 'MY'}
       </button>
       {open && (
         <div
           id="my-menu"
-          className="absolute top-full right-0 z-20 mt-2 grid min-w-max gap-1 rounded-lg border border-main/15 bg-white p-2"
+          className="absolute top-full right-0 z-20 mt-2 grid min-w-max gap-1 rounded-lg border border-line bg-white p-2"
           onClick={() => setOpen(false)}
         >
           {MY_LINKS.map((item) => (
@@ -73,8 +73,8 @@ function MyMenu({ nickname }) {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-                  isActive ? 'bg-main text-background' : 'text-text hover:bg-main/10'
+                `rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+                  isActive ? 'bg-brand text-white' : 'text-ink hover:bg-brand/10'
                 }`
               }
             >
@@ -83,7 +83,7 @@ function MyMenu({ nickname }) {
           ))}
           <NavLink
             to="/tenants"
-            className="rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap text-text no-underline hover:bg-main/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap text-ink no-underline hover:bg-brand/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             테넌트 선택하기
           </NavLink>
@@ -96,7 +96,7 @@ function MyMenu({ nickname }) {
                 .then(() => navigate('/', { replace: true }))
                 .catch(() => setLoggingOut(false))
             }}
-            className="rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap text-text hover:bg-main/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
+            className="rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap text-ink hover:bg-brand/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60"
           >
             로그아웃
           </button>
@@ -118,7 +118,7 @@ function AuthButtons() {
       <NavLink
         to="/login"
         state={{ from: `${location.pathname}${location.search}` }}
-        className="rounded-lg bg-main px-2 py-1.5 text-sm font-semibold whitespace-nowrap text-background hover:bg-main/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-3"
+        className="rounded-lg bg-brand px-2 py-1.5 text-sm font-semibold whitespace-nowrap text-white hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:px-3"
       >
         로그인
       </NavLink>
@@ -131,14 +131,14 @@ function Header() {
   const session = useSession()
 
   return (
-    <header className="border-b border-main/15 bg-header">
+    <header className="border-b border-line bg-label">
       <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-8 md:px-12">
         <NavLink
           to="/"
           end
-          className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         >
-          <span className="font-brand text-lg font-bold tracking-wide text-main">GROUPWARE</span>
+          <span className="font-logo text-lg font-bold tracking-wide text-brand">GROUPWARE</span>
         </NavLink>
         <nav aria-label="메뉴" className="flex items-center gap-1">
           {session.status === 'ready' && (session.authenticated ? <MyMenu nickname={session.nickname} /> : <AuthButtons />)}

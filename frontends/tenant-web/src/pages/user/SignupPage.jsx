@@ -24,7 +24,7 @@ async function readCode(response) {
 /** 가입 폼의 필수 입력 칸. */
 function TextField({ id, label, type, value, onChange, autoComplete }) {
   return (
-    <label htmlFor={id} className="grid gap-1.5 text-sm font-medium text-text sm:text-base">
+    <label htmlFor={id} className="grid gap-1.5 text-sm font-medium text-ink sm:text-base">
       {label}
       <input
         id={id}
@@ -34,7 +34,7 @@ function TextField({ id, label, type, value, onChange, autoComplete }) {
         autoComplete={autoComplete}
         required
         onChange={onChange}
-        className="rounded-lg border border-main/25 bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-main focus:ring-2 focus:ring-accent sm:px-4 sm:py-3"
+        className="rounded-lg border border-line bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-brand focus:ring-2 focus:ring-brand sm:px-4 sm:py-3"
       />
     </label>
   )
@@ -94,14 +94,14 @@ function SignupPage() {
   }
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
+    <main className="flex min-h-dvh items-center justify-center bg-white px-4 py-8 text-ink sm:px-8">
       <div className="grid w-full max-w-md gap-6">
-        <Link to="/" className="text-center font-brand text-2xl font-bold tracking-wide text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+        <Link to="/" className="font-logo text-center text-2xl font-bold tracking-wide text-brand no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:text-3xl">
           GROUPWARE
         </Link>
-        <form onSubmit={handleSubmit} className="grid w-full gap-4 rounded-lg border border-main/15 bg-light p-6 shadow-sm sm:gap-5 sm:p-8">
-          <h2 className="text-xl font-semibold text-main sm:text-2xl">회원가입</h2>
-          <p className="text-sm text-text/70 sm:text-base">이메일로 확인 코드를 보냅니다. 코드를 확인한 뒤에 비밀번호를 정하거나 소셜 계정으로 가입합니다.</p>
+        <form onSubmit={handleSubmit} className="grid w-full gap-4 rounded-lg border border-line bg-label p-6 shadow-sm sm:gap-5 sm:p-8">
+          <h2 className="text-xl font-semibold text-brand sm:text-2xl">회원가입</h2>
+          <p className="text-sm text-tool sm:text-base">이메일로 확인 코드를 보냅니다. 코드를 확인한 뒤에 비밀번호를 정하거나 소셜 계정으로 가입합니다.</p>
           <TextField
             id="email"
             label="이메일"
@@ -114,22 +114,22 @@ function SignupPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-main px-4 py-3 text-sm font-semibold text-background hover:bg-main/90 disabled:opacity-60 sm:text-base"
+              className="rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60 sm:text-base"
             >
               {submitting ? '보내는 중' : '확인 메일 보내기'}
             </button>
-            <p className="flex flex-wrap items-baseline justify-center gap-x-1.5 text-sm text-text/70">
+            <p className="flex flex-wrap items-baseline justify-center gap-x-1.5 text-sm text-tool">
               <span>이미 계정이 있으신가요?</span>
               <Link
                 to="/login"
-                className="font-semibold text-main focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="font-semibold text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               >
                 로그인
               </Link>
             </p>
           </div>
           {result !== '' && (
-            <p className="min-w-0 rounded-lg border border-main/20 bg-white p-3 text-sm">{result}</p>
+            <p className="min-w-0 rounded-lg border border-line bg-white p-3 text-sm">{result}</p>
           )}
         </form>
       </div>

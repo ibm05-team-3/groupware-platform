@@ -1,23 +1,133 @@
 @import "tailwindcss";
 
-/* 디자인 규칙: Deep Navy, Trust Blue, Teal Accent, Soft Emerald, Light Background */
+/* 화면 공통 색 (업무 화면 톤: 파란 버튼, 회색 조건 영역, 주황 체크박스) */
 @theme {
-  /* Barlow Semi Condensed. GROUPWARE 워드마크. SIL Open Font License */
-  --font-brand: "Barlow Semi Condensed", sans-serif;
-  /* Deep Navy. 제목과 본문 글자 */
-  --color-text: #0F172A;
-  /* Deep Navy. 헤더와 사이드바 배경 */
-  --color-navy: #0F172A;
-  /* Trust Blue. 주요 버튼, 링크, 활성 메뉴 */
-  --color-main: #2563EB;
-  /* Teal Accent. 배지와 작은 강조 */
-  --color-accent: #0D9488;
-  /* Soft Emerald. 성공, 완료, 승인 상태 */
-  --color-success: #10B981;
-  /* 페이지와 섹션 배경 */
-  --color-background: #FFFFFF;
-  /* 헤더 배경. 페이지 배경과 분리한다 */
-  --color-header: #F8FAFC;
-  /* Light Background. 로그인·가입 화면의 박스와 풋터 */
-  --color-light: #F8FAFC;
+  --color-brand: #2d5bd7;
+  --color-brand-dark: #2349b4;
+  --color-ink: #1f2430;
+  --color-line: #d7dce5;
+  --color-label: #f1f3f7;
+  --color-tool: #5d6b82;
+  --color-check: #f2703d;
+  --font-sans: "Pretendard Variable", "Pretendard", "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+  /* GROUPWARE 워드마크. 본문 글꼴과 분리한다 */
+  --font-logo: sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  background: #fff;
+  font-size: 13px;
+}
+
+/* 모든 버튼 누름 효과: 누르는 동안 안쪽 그림자 + 어두워짐 (화면별 버튼 클래스로 덮어쓸 수 있게 base 층) */
+@layer base {
+  /* 버튼을 움직이지 않는다: 1px 내리면 윗가장자리를 누른 경우 손을 뗄 때 포인터가 버튼 밖이라 클릭이 안 됨 */
+  button:not(:disabled):active {
+    box-shadow: inset 0 2px 3px rgb(0 0 0 / 0.3);
+    filter: brightness(0.85);
+  }
+}
+
+/* 그리드 공통 보정: 헤더 배경, 필수 컬럼 *, 행 상태 */
+.ag-theme-hr .ag-header {
+  --ag-header-background-color: #f3f5f9;
+}
+
+/* 체크박스(선택) 컬럼: 헤더·셀 모두 체크박스를 가운데.
+   헤더는 빈 제목 영역이 남은 폭을 차지해 체크박스를 왼쪽으로 밀고, 셀은 체크박스 오른쪽 기본 여백 때문에 왼쪽으로 쏠린다 */
+.ag-theme-hr .ag-header-cell[col-id="ag-Grid-SelectionColumn"] {
+  justify-content: center;
+}
+.ag-theme-hr .ag-header-cell[col-id="ag-Grid-SelectionColumn"] .ag-header-cell-comp-wrapper {
+  display: none;
+}
+.ag-theme-hr .ag-cell[col-id="ag-Grid-SelectionColumn"] .ag-cell-wrapper {
+  justify-content: center;
+}
+/* 셀에도 체크박스 옆에 빈 값 칸(.ag-cell-value)이 있어 남은 폭을 차지한다 → 숨김 */
+.ag-theme-hr .ag-cell[col-id="ag-Grid-SelectionColumn"] .ag-cell-value {
+  display: none;
+}
+.ag-theme-hr [col-id="ag-Grid-SelectionColumn"] .ag-selection-checkbox,
+.ag-theme-hr [col-id="ag-Grid-SelectionColumn"] .ag-header-select-all {
+  margin: 0;
+}
+
+/* 헤더 제목은 셀 정렬(왼쪽·오른쪽)과 상관없이 전부 가운데 (그룹 헤더 포함) */
+.ag-theme-hr .ag-header-cell-label,
+.ag-theme-hr .ag-header-group-cell-label {
+  justify-content: center;
+}
+
+.required-header .ag-header-cell-text::after {
+  content: " *";
+  color: #e5484d;
+}
+
+.row-deleted {
+  color: #9aa3b2 !important;
+  text-decoration: line-through;
+}
+
+.cell-readonly {
+  background: #fafbfc;
+}
+
+/* 체크박스 셀 편집 중: AG Grid 기본 편집 상자는 셀보다 크고(높이 +, 테두리) 체크박스를 왼쪽에 붙여서
+   클릭하는 순간 체크박스가 옆으로 튄다. 편집 전과 같은 크기·가운데 위치로 고정한다. */
+.ag-theme-hr .ag-cell.ag-cell-inline-editing:has(.ag-checkbox-edit) {
+  height: 100%;
+  padding: 0;
+  border: 1px solid transparent !important;
+  box-shadow: none;
+  background: transparent;
+}
+
+.ag-theme-hr .ag-checkbox-edit {
+  justify-content: center;
+  padding: 0 !important;
+}
+
+/* 지금 선택(조회 중)인 행 */
+.ag-theme-hr .row-current {
+  background-color: #fff1e6 !important;
+}
+
+/* 조직도 드래그 위치 표시: 하위로 = 테두리, 위로 = 윗선, 아래로 = 아랫선 */
+/* 줄 위에 덧씌운 층(::after)에 그린다: 줄 자체에 그리면 배경색 있는 칸(사번·사용여부 등)이 선을 덮어 끊겨 보임.
+   테마가 줄 ::after 에 배경을 쓰므로 배경은 지운다 */
+.drop-into::after,
+.drop-before::after,
+.drop-after::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: none !important;
+}
+.drop-into::after {
+  box-shadow: inset 0 0 0 2px var(--color-brand);
+}
+.drop-before::after {
+  box-shadow: inset 0 3px 0 0 var(--color-brand);
+}
+.drop-after::after {
+  box-shadow: inset 0 -3px 0 0 var(--color-brand);
+}
+
+@media print {
+  aside,
+  header,
+  .no-print {
+    display: none !important;
+  }
 }

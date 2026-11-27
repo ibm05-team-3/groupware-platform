@@ -13,8 +13,8 @@ const MENUS = [
 
 /** 선택한 메뉴와 그 외 메뉴의 글자색과 배경을 가른다. */
 function linkClass(isActive) {
-  return `rounded-lg px-2 py-1.5 text-sm font-medium whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-3 ${
-    isActive ? 'bg-main text-background' : 'text-text hover:bg-main/10'
+  return `rounded-lg px-2 py-1.5 text-sm font-medium whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:px-3 ${
+    isActive ? 'bg-brand text-white' : 'text-ink hover:bg-brand/10'
   }`
 }
 
@@ -53,14 +53,14 @@ function TenantProfile({ nickname }) {
         aria-controls="tenant-my-menu"
         aria-label={label}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-main px-2 text-xs font-semibold text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-brand px-2 text-xs font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
       >
         {nicknameText ? nicknameText.slice(0, 1) : 'MY'}
       </button>
       {open && (
         <div
           id="tenant-my-menu"
-          className="absolute top-full right-0 z-20 mt-2 grid min-w-max gap-1 rounded-lg border border-main/15 bg-white p-2"
+          className="absolute top-full right-0 z-20 mt-2 grid min-w-max gap-1 rounded-lg border border-line bg-white p-2"
         >
           <button
             type="button"
@@ -70,7 +70,7 @@ function TenantProfile({ nickname }) {
               // 서브도메인에서 바로 회사를 해제하면 세션 쿠키가 빠지고 401 이 된다.
               window.location.assign(appUrl('/tenants', window.location))
             }}
-            className="rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap text-text hover:bg-main/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
+            className="rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap text-ink hover:bg-brand/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60"
           >
             테넌트 선택하기
           </button>
@@ -81,7 +81,7 @@ function TenantProfile({ nickname }) {
               setBusy(true)
               window.location.assign(appUrl('/logout', window.location))
             }}
-            className="rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap text-text hover:bg-main/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
+            className="rounded-lg px-3 py-2 text-left text-sm font-medium whitespace-nowrap text-ink hover:bg-brand/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60"
           >
             로그아웃
           </button>
@@ -96,7 +96,7 @@ function SubdomainHeader() {
   const session = useSession()
 
   return (
-    <header className="border-b border-main/15 bg-header px-4 py-3 sm:px-8 md:px-12">
+    <header className="border-b border-line bg-label px-4 py-3 sm:px-8 md:px-12">
       <div className="flex items-center justify-between gap-3">
         <nav className="flex flex-wrap gap-1" aria-label="테넌트 메뉴">
           {MENUS.map((item) => (
