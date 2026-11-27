@@ -19,7 +19,7 @@ function socialLoginUrl(registrationId) {
 /** 로그인 폼의 필수 입력 칸. */
 function TextField({ id, label, type, value, onChange, autoComplete }) {
   return (
-    <label htmlFor={id} className="grid gap-1.5 text-sm font-medium text-text sm:text-base">
+    <label htmlFor={id} className="grid gap-1.5 text-sm font-medium text-ink sm:text-base">
       {label}
       <input
         id={id}
@@ -29,7 +29,7 @@ function TextField({ id, label, type, value, onChange, autoComplete }) {
         autoComplete={autoComplete}
         required
         onChange={onChange}
-        className="rounded-lg border border-main/25 bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-main focus:ring-2 focus:ring-accent sm:px-4 sm:py-3"
+        className="rounded-lg border border-line bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-brand focus:ring-2 focus:ring-brand sm:px-4 sm:py-3"
       />
     </label>
   )
@@ -71,13 +71,13 @@ function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
+    <main className="flex min-h-dvh items-center justify-center bg-white px-4 py-8 text-ink sm:px-8">
       <div className="grid w-full max-w-md gap-6">
-        <Link to="/" className="text-center font-brand text-2xl font-bold tracking-wide text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+        <Link to="/" className="font-logo text-center text-2xl font-bold tracking-wide text-brand no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:text-3xl">
           GROUPWARE
         </Link>
-        <form onSubmit={handleSubmit} className="grid w-full gap-4 rounded-lg border border-main/15 bg-light p-6 shadow-sm sm:gap-5 sm:p-8">
-          <h2 className="text-xl font-semibold text-main sm:text-2xl">로그인</h2>
+        <form onSubmit={handleSubmit} className="grid w-full gap-4 rounded-lg border border-line bg-label p-6 shadow-sm sm:gap-5 sm:p-8">
+          <h2 className="text-xl font-semibold text-brand sm:text-2xl">로그인</h2>
           <TextField
             id="email"
             label="이메일"
@@ -97,7 +97,7 @@ function LoginPage() {
             />
             <Link
               to="/password-reset"
-              className="justify-self-end text-sm font-semibold text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="justify-self-end text-sm font-semibold text-brand no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >
               비밀번호를 잊으셨나요?
             </Link>
@@ -106,24 +106,24 @@ function LoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-main px-4 py-3 text-sm font-semibold text-background hover:bg-main/90 disabled:opacity-60 sm:text-base"
+              className="rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60 sm:text-base"
             >
               {submitting ? '로그인 중' : '로그인'}
             </button>
-            <p className="flex flex-wrap items-baseline justify-center gap-x-1.5 text-sm text-text/70">
+            <p className="flex flex-wrap items-baseline justify-center gap-x-1.5 text-sm text-tool">
               <span>계정이 없으신가요?</span>
               <Link
                 to="/signup"
-                className="font-semibold text-main focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="font-semibold text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               >
                 회원가입
               </Link>
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="h-px flex-1 bg-main/20" />
-            <span className="text-sm text-text/70">또는</span>
-            <span className="h-px flex-1 bg-main/20" />
+            <span className="h-px flex-1 bg-line" />
+            <span className="text-sm text-tool">또는</span>
+            <span className="h-px flex-1 bg-line" />
           </div>
           <a
             className="gsi-material-button block no-underline"
@@ -146,7 +146,7 @@ function LoginPage() {
             <span className="text-sm font-medium text-white">네이버 로그인</span>
           </a>
           {result !== '' && (
-            <p className="max-h-[40dvh] min-w-0 overflow-auto whitespace-pre-wrap break-all rounded-lg border border-main/20 bg-white p-3 text-sm">
+            <p className="max-h-[40dvh] min-w-0 overflow-auto whitespace-pre-wrap break-all rounded-lg border border-line bg-white p-3 text-sm">
               {result}
             </p>
           )}

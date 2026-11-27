@@ -11,7 +11,7 @@ const BACKEND_API_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL
 /** 비밀번호 재설정 폼의 필수 입력 칸. */
 function TextField({ id, label, type, value, onChange, autoComplete }) {
   return (
-    <label htmlFor={id} className="grid gap-1.5 text-sm font-medium text-text sm:text-base">
+    <label htmlFor={id} className="grid gap-1.5 text-sm font-medium text-ink sm:text-base">
       {label}
       <input
         id={id}
@@ -21,7 +21,7 @@ function TextField({ id, label, type, value, onChange, autoComplete }) {
         autoComplete={autoComplete}
         required
         onChange={onChange}
-        className="rounded-lg border border-main/25 bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-main focus:ring-2 focus:ring-accent sm:px-4 sm:py-3"
+        className="rounded-lg border border-line bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-brand focus:ring-2 focus:ring-brand sm:px-4 sm:py-3"
       />
     </label>
   )
@@ -30,13 +30,13 @@ function TextField({ id, label, type, value, onChange, autoComplete }) {
 /** 재설정 화면의 가운데 정렬 틀. */
 function AuthShell({ title, children }) {
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
+    <main className="flex min-h-dvh items-center justify-center bg-white px-4 py-8 text-ink sm:px-8">
       <div className="grid w-full max-w-md gap-6">
-        <Link to="/" className="text-center font-brand text-2xl font-bold tracking-wide text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+        <Link to="/" className="font-logo text-center text-2xl font-bold tracking-wide text-brand no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:text-3xl">
           GROUPWARE
         </Link>
-        <div className="grid w-full gap-4 rounded-lg border border-main/15 bg-light p-6 shadow-sm sm:gap-5 sm:p-8">
-          <h2 className="text-xl font-semibold text-main sm:text-2xl">{title}</h2>
+        <div className="grid w-full gap-4 rounded-lg border border-line bg-label p-6 shadow-sm sm:gap-5 sm:p-8">
+          <h2 className="text-xl font-semibold text-brand sm:text-2xl">{title}</h2>
           {children}
         </div>
       </div>
@@ -137,10 +137,10 @@ function PasswordResetPage() {
   if (done) {
     return (
       <AuthShell title="비밀번호를 바꿨습니다">
-        <p className="text-sm text-text sm:text-base">새 비밀번호로 로그인해 주세요.</p>
+        <p className="text-sm text-ink sm:text-base">새 비밀번호로 로그인해 주세요.</p>
         <Link
           to="/login"
-          className="rounded-lg bg-main px-4 py-3 text-center text-sm font-semibold text-background no-underline hover:bg-main/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:text-base"
+          className="rounded-lg bg-brand px-4 py-3 text-center text-sm font-semibold text-white no-underline hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:text-base"
         >
           로그인
         </Link>
@@ -151,11 +151,11 @@ function PasswordResetPage() {
   if (sentTo) {
     return (
       <AuthShell title="이메일을 확인해 주세요">
-        <p className="min-w-0 text-sm break-all text-text sm:text-base">계정이 있으면 {sentTo}로 재설정 메일을 보냈습니다.</p>
-        <p className="text-sm text-text/70">메일이 보이지 않으면 스팸함도 확인해 주세요. 링크는 30분 동안만 사용할 수 있습니다.</p>
+        <p className="min-w-0 text-sm break-all text-ink sm:text-base">계정이 있으면 {sentTo}로 재설정 메일을 보냈습니다.</p>
+        <p className="text-sm text-tool">메일이 보이지 않으면 스팸함도 확인해 주세요. 링크는 30분 동안만 사용할 수 있습니다.</p>
         <Link
           to="/login"
-          className="rounded-lg bg-main px-4 py-3 text-center text-sm font-semibold text-background no-underline hover:bg-main/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:text-base"
+          className="rounded-lg bg-brand px-4 py-3 text-center text-sm font-semibold text-white no-underline hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:text-base"
         >
           로그인으로 돌아가기
         </Link>
@@ -186,20 +186,20 @@ function PasswordResetPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-lg bg-main px-4 py-3 text-sm font-semibold text-background hover:bg-main/90 disabled:opacity-60 sm:text-base"
+            className="rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60 sm:text-base"
           >
             {submitting ? '변경 중' : '비밀번호 변경'}
           </button>
-          <p className="text-center text-sm text-text/70">
+          <p className="text-center text-sm text-tool">
             <Link
               to="/login"
-              className="font-semibold text-main focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="font-semibold text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >
               로그인으로 돌아가기
             </Link>
           </p>
           {result !== '' && (
-            <p className="min-w-0 rounded-lg border border-main/20 bg-white p-3 text-sm">{result}</p>
+            <p className="min-w-0 rounded-lg border border-line bg-white p-3 text-sm">{result}</p>
           )}
         </form>
       </AuthShell>
@@ -220,20 +220,20 @@ function PasswordResetPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-lg bg-main px-4 py-3 text-sm font-semibold text-background hover:bg-main/90 disabled:opacity-60 sm:text-base"
+          className="rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60 sm:text-base"
         >
           {submitting ? '보내는 중' : '재설정 메일 보내기'}
         </button>
-        <p className="text-center text-sm text-text/70">
+        <p className="text-center text-sm text-tool">
           <Link
             to="/login"
-            className="font-semibold text-main focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="font-semibold text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             로그인으로 돌아가기
           </Link>
         </p>
         {result !== '' && (
-          <p className="min-w-0 rounded-lg border border-main/20 bg-white p-3 text-sm">{result}</p>
+          <p className="min-w-0 rounded-lg border border-line bg-white p-3 text-sm">{result}</p>
         )}
       </form>
     </AuthShell>

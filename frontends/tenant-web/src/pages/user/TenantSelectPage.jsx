@@ -98,15 +98,15 @@ function TenantSelectPage() {
   }, [])
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
+    <main className="flex min-h-dvh items-center justify-center bg-white px-4 py-8 text-ink sm:px-8">
       <div className="grid w-full max-w-md gap-6">
-        <Link to="/" className="text-center font-brand text-2xl font-bold tracking-wide text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+        <Link to="/" className="font-logo text-center text-2xl font-bold tracking-wide text-brand no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:text-3xl">
           GROUPWARE
         </Link>
-        <div className="grid w-full gap-4 rounded-lg border border-main/15 bg-light p-6 shadow-sm sm:gap-5 sm:p-8">
-          <h2 className="text-xl font-semibold text-main sm:text-2xl">테넌트 선택</h2>
+        <div className="grid w-full gap-4 rounded-lg border border-line bg-label p-6 shadow-sm sm:gap-5 sm:p-8">
+          <h2 className="text-xl font-semibold text-brand sm:text-2xl">테넌트 선택</h2>
           {status === 'loading' ? (
-            <p className="text-sm text-text/70 sm:text-base">테넌트를 확인하고 있습니다.</p>
+            <p className="text-sm text-tool sm:text-base">테넌트를 확인하고 있습니다.</p>
           ) : (
             <ul className="grid gap-2">
               {tenants.map((tenant) => (
@@ -115,17 +115,17 @@ function TenantSelectPage() {
                     type="button"
                     disabled={entering !== ''}
                     onClick={() => enter(tenant.slug)}
-                    className="grid w-full gap-0.5 rounded-lg border border-main/25 bg-white px-4 py-3 text-left hover:bg-main/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
+                    className="grid w-full gap-0.5 rounded-lg border border-line bg-white px-4 py-3 text-left hover:bg-label focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60"
                   >
-                    <span className="text-sm font-semibold text-main sm:text-base">{tenant.name}</span>
-                    <span className="text-xs text-text/70">{tenant.slug}</span>
+                    <span className="text-sm font-semibold text-brand sm:text-base">{tenant.name}</span>
+                    <span className="text-xs text-tool">{tenant.slug}</span>
                   </button>
                 </li>
               ))}
             </ul>
           )}
           {notice !== '' && (
-            <p className="min-w-0 rounded-lg border border-main/20 bg-white p-3 text-sm">{notice}</p>
+            <p className="min-w-0 rounded-lg border border-line bg-white p-3 text-sm">{notice}</p>
           )}
         </div>
       </div>

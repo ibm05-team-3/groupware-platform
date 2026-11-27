@@ -10,7 +10,7 @@ import Header from './Header'
 /** 헤더, 본문, 푸터를 한 화면에 둔다. */
 function UserLayout() {
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-text">
+    <div className="flex min-h-dvh flex-col bg-white text-ink">
       <Header />
       <main className="flex-1">
         <Outlet />

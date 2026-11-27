@@ -11,19 +11,19 @@ const year = new Date().getFullYear()
 function Footer() {
 
   return (
-    <footer className="border-t border-main/15 bg-light px-4 py-4 sm:px-8 md:px-12">
-      <Link to="/" className="inline-block font-brand text-lg font-bold tracking-wide text-main focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+    <footer className="border-t border-line bg-label px-4 py-4 sm:px-8 md:px-12">
+      <Link to="/" className="font-logo inline-block text-lg font-bold tracking-wide text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
         GROUPWARE
       </Link>
       <p className="mt-3">
         <Link
           to="/privacy"
-          className="text-xs text-text/70 underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="text-xs text-tool underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         >
           개인정보처리방침
         </Link>
       </p>
-      <p className="mt-3 text-xs text-text/60">© {year} GROUPWARE</p>
+      <p className="mt-3 text-xs text-tool">© {year} GROUPWARE</p>
     </footer>
   )
 }

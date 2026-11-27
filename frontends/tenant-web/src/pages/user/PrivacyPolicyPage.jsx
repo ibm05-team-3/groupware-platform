@@ -77,9 +77,9 @@ const ko = {
 /** 방침 표. 가로로 넘치면 스크롤한다. */
 function Table({ table }) {
   return (
-    <div className="mt-4 overflow-x-auto rounded-lg border border-main/15">
+    <div className="mt-4 overflow-x-auto rounded-lg border border-line">
       <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
-        <thead className="bg-main/5 text-main">
+        <thead className="bg-label text-brand">
           <tr>
             {table.head.map((cell) => (
               <th key={cell} className="px-3 py-2 font-semibold">{cell}</th>
@@ -88,9 +88,9 @@ function Table({ table }) {
         </thead>
         <tbody>
           {table.rows.map((row) => (
-            <tr key={row.join('|')} className="border-t border-main/10 align-top">
+            <tr key={row.join('|')} className="border-t border-line align-top">
               {row.map((cell) => (
-                <td key={cell} className="px-3 py-2 leading-6 text-text/80">{cell}</td>
+                <td key={cell} className="px-3 py-2 leading-6 text-tool">{cell}</td>
               ))}
             </tr>
           ))}
@@ -109,14 +109,14 @@ function PrivacyPolicyPage() {
   return (
     <article className="px-4 py-6 sm:px-8 sm:py-8 md:px-12 md:py-10">
       <div className="mx-auto max-w-3xl">
-        <h1 className="text-2xl font-semibold text-main sm:text-3xl">{ko.title}</h1>
-        <p className="mt-4 text-sm leading-6 text-text/80">{ko.lead}</p>
+        <h1 className="text-2xl font-semibold text-brand sm:text-3xl">{ko.title}</h1>
+        <p className="mt-4 text-sm leading-6 text-tool">{ko.lead}</p>
         {ko.sections.map((section) => (
           <section key={section.heading}>
-            <h2 className="mt-8 text-lg font-semibold text-main">{section.heading}</h2>
-            {section.body && <p className="mt-3 text-sm leading-6 text-text/80">{section.body}</p>}
+            <h2 className="mt-8 text-lg font-semibold text-brand">{section.heading}</h2>
+            {section.body && <p className="mt-3 text-sm leading-6 text-tool">{section.body}</p>}
             {section.items && (
-              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-text/80">
+              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-tool">
                 {section.items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}

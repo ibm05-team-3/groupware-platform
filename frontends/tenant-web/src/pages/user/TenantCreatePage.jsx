@@ -83,14 +83,14 @@ function TenantCreatePage() {
   }
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8 text-text sm:px-8">
+    <main className="flex min-h-dvh items-center justify-center bg-white px-4 py-8 text-ink sm:px-8">
       <div className="grid w-full max-w-md gap-6">
-        <Link to="/" className="text-center font-brand text-2xl font-bold tracking-wide text-main no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-3xl">
+        <Link to="/" className="font-logo text-center text-2xl font-bold tracking-wide text-brand no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:text-3xl">
           GROUPWARE
         </Link>
-        <form onSubmit={handleSubmit} className="grid w-full gap-4 rounded-lg border border-main/15 bg-light p-6 shadow-sm sm:gap-5 sm:p-8">
-          <h2 className="text-xl font-semibold text-main sm:text-2xl">테넌트 만들기</h2>
-          <label htmlFor="name" className="grid gap-1.5 text-sm font-medium text-text sm:text-base">
+        <form onSubmit={handleSubmit} className="grid w-full gap-4 rounded-lg border border-line bg-label p-6 shadow-sm sm:gap-5 sm:p-8">
+          <h2 className="text-xl font-semibold text-brand sm:text-2xl">테넌트 만들기</h2>
+          <label htmlFor="name" className="grid gap-1.5 text-sm font-medium text-ink sm:text-base">
             이름
             <input
               id="name"
@@ -100,10 +100,10 @@ function TenantCreatePage() {
               autoComplete="organization"
               required
               onChange={(event) => setName(event.target.value)}
-              className="rounded-lg border border-main/25 bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-main focus:ring-2 focus:ring-accent sm:px-4 sm:py-3"
+              className="rounded-lg border border-line bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-brand focus:ring-2 focus:ring-brand sm:px-4 sm:py-3"
             />
           </label>
-          <label htmlFor="slug" className="grid gap-1.5 text-sm font-medium text-text sm:text-base">
+          <label htmlFor="slug" className="grid gap-1.5 text-sm font-medium text-ink sm:text-base">
             주소 이름
             <input
               id="slug"
@@ -114,19 +114,19 @@ function TenantCreatePage() {
               spellCheck={false}
               required
               onChange={(event) => setSlug(event.target.value)}
-              className="rounded-lg border border-main/25 bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-main focus:ring-2 focus:ring-accent sm:px-4 sm:py-3"
+              className="rounded-lg border border-line bg-white px-3 py-2.5 text-base font-normal outline-none focus:border-brand focus:ring-2 focus:ring-brand sm:px-4 sm:py-3"
             />
           </label>
-          <p className="text-sm text-text/70">주소 이름은 소문자, 숫자, 하이픈만 쓸 수 있습니다.</p>
+          <p className="text-sm text-tool">주소 이름은 소문자, 숫자, 하이픈만 쓸 수 있습니다.</p>
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-lg bg-main px-4 py-3 text-sm font-semibold text-background hover:bg-main/90 disabled:opacity-60 sm:text-base"
+            className="rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60 sm:text-base"
           >
             {submitting ? '만드는 중' : '테넌트 만들기'}
           </button>
           {result !== '' && (
-            <p className="min-w-0 rounded-lg border border-main/20 bg-white p-3 text-sm">{result}</p>
+            <p className="min-w-0 rounded-lg border border-line bg-white p-3 text-sm">{result}</p>
           )}
         </form>
       </div>
